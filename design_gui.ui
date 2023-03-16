@@ -25,11 +25,11 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>teOCTControl - Version-1.65 May-2022</string>
+   <string>OCTControl</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../Users/r.zor/.designer/backup/icon.ico</normaloff>../../Users/r.zor/.designer/backup/icon.ico</iconset>
+    <normaloff>icon.ico</normaloff>icon.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -54,10 +54,19 @@
     </size>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_20">
+    <property name="topMargin">
+     <number>16</number>
+    </property>
+    <property name="rightMargin">
+     <number>16</number>
+    </property>
+    <property name="bottomMargin">
+     <number>24</number>
+    </property>
     <item>
-     <layout class="QGridLayout" name="gridLayout_5">
+     <layout class="QGridLayout" name="gridMain">
       <item row="3" column="1">
-       <widget class="QGroupBox" name="VisSaveBox">
+       <widget class="QGroupBox" name="group_VisualizationSaving">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -76,24 +85,17 @@
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="1">
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout" name="gridLayout_VisualizationSaving">
            <item row="1" column="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <layout class="QHBoxLayout" name="horizontalLayout_ApectRatio">
              <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
+              <widget class="QLabel" name="label_Aspect">
+               <property name="minimumSize">
                 <size>
-                 <width>250</width>
-                 <height>20</height>
+                 <width>0</width>
+                 <height>15</height>
                 </size>
                </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="aspect_desc">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -111,12 +113,18 @@
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Aspect ratio</string>
+                <string>Aspect Ratio</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="aspectr">
+              <widget class="QLineEdit" name="aspect_ratio">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -134,12 +142,24 @@
             </layout>
            </item>
            <item row="1" column="3" colspan="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <layout class="QHBoxLayout" name="horizontalLayout_Log10Coef">
              <item>
-              <widget class="QLabel" name="coeff_desc">
+              <widget class="QLabel" name="label_Log10Coef">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="maximumSize">
                 <size>
-                 <width>70</width>
+                 <width>16777215</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -154,17 +174,26 @@
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>DR log coeff.</string>
+                <string>LOG10 Factor </string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="inlog_coef">
+              <widget class="QLineEdit" name="log10_coef">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
                </property>
                <property name="maximumSize">
                 <size>
@@ -184,6 +213,12 @@
            </item>
            <item row="3" column="4">
             <widget class="QLineEdit" name="filenameline">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>15</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -196,19 +231,37 @@
             </widget>
            </item>
            <item row="3" column="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_39">
+            <layout class="QHBoxLayout" name="horizontalLayout_directory">
              <item>
               <widget class="QLineEdit" name="FolderLine">
                <property name="minimumSize">
                 <size>
                  <width>200</width>
-                 <height>0</height>
+                 <height>15</height>
                 </size>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QToolButton" name="FolderButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>20</height>
+                </size>
+               </property>
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
@@ -220,7 +273,13 @@
             </layout>
            </item>
            <item row="3" column="1">
-            <widget class="QLabel" name="FileName_label">
+            <widget class="QLabel" name="label_DirName">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>15</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <pointsize>8</pointsize>
@@ -234,9 +293,27 @@
             </widget>
            </item>
            <item row="3" column="5">
-            <widget class="QPushButton" name="SAVE_button">
+            <widget class="QPushButton" name="SaveButton">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -258,12 +335,24 @@
             </widget>
            </item>
            <item row="1" column="5">
-            <widget class="QPushButton" name="PLOT_BUTTON">
+            <widget class="QPushButton" name="PlotButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -284,7 +373,13 @@
             </widget>
            </item>
            <item row="3" column="3">
-            <widget class="QLabel" name="FileNamelabel">
+            <widget class="QLabel" name="label_FileName">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>15</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
                <width>60</width>
@@ -374,11 +469,17 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_17">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_33">
+             <layout class="QHBoxLayout" name="horizontalLayout_XScanParams">
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_3">
+               <layout class="QVBoxLayout" name="verticalLayout__XScanParams">
                 <item>
                  <widget class="QLabel" name="scan_label">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>15</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>8</pointsize>
@@ -395,9 +496,15 @@
                  </widget>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <layout class="QHBoxLayout" name="horizontalLayout_XRange">
                   <item>
-                   <widget class="QLineEdit" name="instarttp">
+                   <widget class="QLineEdit" name="x_start_pos_ui">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>15</height>
+                     </size>
+                    </property>
                     <property name="font">
                      <font>
                       <weight>50</weight>
@@ -413,7 +520,13 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="instopp">
+                   <widget class="QLineEdit" name="x_stop_pos_ui">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>15</height>
+                     </size>
+                    </property>
                     <property name="font">
                      <font>
                       <weight>50</weight>
@@ -429,9 +542,27 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="Button_ZmoveTo">
+                   <widget class="QPushButton" name="Button_XMoveTo">
                     <property name="enabled">
                      <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>20</height>
+                     </size>
                     </property>
                     <property name="font">
                      <font>
@@ -447,9 +578,15 @@
                  </layout>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_14">
+                 <layout class="QHBoxLayout" name="horizontalLayout_XStep">
                   <item>
-                   <widget class="QLabel" name="label_9">
+                   <widget class="QLabel" name="label_XStep">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>15</height>
+                     </size>
+                    </property>
                     <property name="font">
                      <font>
                       <pointsize>8</pointsize>
@@ -466,7 +603,13 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="instep">
+                   <widget class="QLineEdit" name="x_step_ui">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>15</height>
+                     </size>
+                    </property>
                     <property name="font">
                      <font>
                       <weight>50</weight>
@@ -484,9 +627,27 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="Measure_button">
+                 <widget class="QPushButton" name="Bscan_MeasureButton">
                   <property name="enabled">
                    <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>20</height>
+                   </size>
                   </property>
                   <property name="font">
                    <font>
@@ -545,11 +706,11 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_32">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_14">
+             <layout class="QVBoxLayout" name="verticalLayout_YScanParams">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_21">
+               <layout class="QHBoxLayout" name="horizontalLayout_YScanParams">
                 <item>
-                 <widget class="QLabel" name="YscanStep">
+                 <widget class="QLabel" name="label_YscanStep">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -559,7 +720,7 @@
                   <property name="minimumSize">
                    <size>
                     <width>1</width>
-                    <height>0</height>
+                    <height>15</height>
                    </size>
                   </property>
                   <property name="font">
@@ -570,16 +731,22 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>Y interval (mm)</string>
+                   <string>Y scanning interval (mm)</string>
                   </property>
                  </widget>
                 </item>
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_28">
+               <layout class="QHBoxLayout" name="horizontalLayout_YScanRange">
                 <item>
-                 <widget class="QLineEdit" name="Y_start_pos">
+                 <widget class="QLineEdit" name="ui_y_start_pos">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>15</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <weight>50</weight>
@@ -592,7 +759,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="Y_stop_pos">
+                 <widget class="QLineEdit" name="ui_y_stop_pos">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -602,7 +769,7 @@
                   <property name="minimumSize">
                    <size>
                     <width>5</width>
-                    <height>0</height>
+                    <height>15</height>
                    </size>
                   </property>
                   <property name="font">
@@ -619,14 +786,20 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_24">
+               <layout class="QHBoxLayout" name="horizontalLayout_YStep">
                 <item>
-                 <widget class="QLabel" name="YstepNumberLabel">
+                 <widget class="QLabel" name="label_Ystep">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>15</height>
+                   </size>
                   </property>
                   <property name="font">
                    <font>
@@ -641,7 +814,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="Y_step">
+                 <widget class="QLineEdit" name="y_step">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -651,7 +824,7 @@
                   <property name="minimumSize">
                    <size>
                     <width>5</width>
-                    <height>0</height>
+                    <height>15</height>
                    </size>
                   </property>
                   <property name="font">
@@ -668,9 +841,27 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <layout class="QHBoxLayout" name="horizontalLayout_YStageAndMeas">
                 <item>
                  <widget class="QPushButton" name="InitializeYstageButton">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>20</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>9</pointsize>
@@ -687,9 +878,27 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="StartCscanBUTTON">
+                 <widget class="QPushButton" name="StartCscanButton">
                   <property name="enabled">
                    <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>20</height>
+                   </size>
                   </property>
                   <property name="font">
                    <font>
@@ -711,9 +920,15 @@
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_13">
+             <layout class="QVBoxLayout" name="verticalLayout_YStageRoughControl">
               <item>
                <widget class="QLabel" name="label">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>15</height>
+                 </size>
+                </property>
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -737,9 +952,27 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="Button_YmoveTo">
+               <widget class="QPushButton" name="YStageMoveToButton">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>20</height>
+                 </size>
                 </property>
                 <property name="font">
                  <font>
@@ -753,9 +986,27 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="YStageUP">
+               <widget class="QPushButton" name="YStageUpButton">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>20</height>
+                 </size>
                 </property>
                 <property name="font">
                  <font>
@@ -772,9 +1023,27 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="YStageDOWN">
+               <widget class="QPushButton" name="YStageDownButton">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>20</height>
+                 </size>
                 </property>
                 <property name="font">
                  <font>
@@ -796,7 +1065,7 @@
           </widget>
          </item>
          <item row="1" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_34">
+          <layout class="QHBoxLayout" name="horizontalLayout_MeasurementProgress">
            <item>
             <widget class="QLabel" name="MeasurementProgressLine">
              <property name="sizePolicy">
@@ -804,6 +1073,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>15</height>
+              </size>
              </property>
              <property name="maximumSize">
               <size>
@@ -825,6 +1100,12 @@
            </item>
            <item>
             <widget class="QProgressBar" name="scanprogressBar">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>15</height>
+              </size>
+             </property>
              <property name="styleSheet">
               <string notr="true"/>
              </property>
@@ -835,6 +1116,24 @@
            </item>
            <item>
             <widget class="QPushButton" name="StopButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <pointsize>9</pointsize>
@@ -858,12 +1157,12 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="Layout_Parameters">
       <property name="sizeConstraint">
        <enum>QLayout::SetMinimumSize</enum>
       </property>
       <item>
-       <widget class="QGroupBox" name="groupBox_4">
+       <widget class="QGroupBox" name="groupBox_InitAndLogs">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -873,7 +1172,7 @@
         <property name="minimumSize">
          <size>
           <width>200</width>
-          <height>0</height>
+          <height>200</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -894,9 +1193,9 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_16">
          <item>
-          <widget class="QPushButton" name="InitBUTTON">
+          <widget class="QPushButton" name="InitButton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -904,7 +1203,13 @@
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>20</height>
             </size>
            </property>
            <property name="font">
@@ -955,7 +1260,7 @@
            <property name="minimumSize">
             <size>
              <width>150</width>
-             <height>0</height>
+             <height>50</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -978,9 +1283,9 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="ACQ_parameters">
+       <widget class="QGroupBox" name="group_AcquisitionParameters">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -1011,15 +1316,21 @@ p, li { white-space: pre-wrap; }
          <string notr="true"/>
         </property>
         <property name="title">
-         <string> DAQ parameters</string>
+         <string>Acquisition parameters</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QVBoxLayout" name="verticalLayout_AcquisitionParameters">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
+            <layout class="QHBoxLayout" name="horizontalLayout_Param1">
              <item>
-              <widget class="QLabel" name="freq_label">
+              <widget class="QLabel" name="label_param1">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1030,12 +1341,18 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>IP</string>
+                <string>PARAM1</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="IP_var">
+              <widget class="QLineEdit" name="param1">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1047,19 +1364,25 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>10.40.47.135</string>
+                <string>1024</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <layout class="QHBoxLayout" name="horizontalLayout_TrigDelay">
              <item>
-              <widget class="QLabel" name="delay_label">
+              <widget class="QLabel" name="label_delay">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
-                 <pointsize>8</pointsize>
+                 <pointsize>10</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -1068,12 +1391,18 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Trig. delay</string>
+                <string>TRIG. DELAY</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="delay_var">
+              <widget class="QLineEdit" name="trig_delay">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1092,9 +1421,15 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <layout class="QHBoxLayout" name="horizontalLayout_param2">
              <item>
-              <widget class="QLabel" name="DEC_label">
+              <widget class="QLabel" name="label_param2">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1105,12 +1440,18 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Decimation</string>
+                <string>PARAM2</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="decimation_var">
+              <widget class="QLineEdit" name="param2">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1129,12 +1470,24 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="APPLY_button">
+            <widget class="QPushButton" name="ApplyButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -1160,9 +1513,9 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="OCT_Params">
+       <widget class="QGroupBox" name="group_OCTParams">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -1194,13 +1547,19 @@ p, li { white-space: pre-wrap; }
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
+          <layout class="QVBoxLayout" name="verticalLayout_OCTParams">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
+            <layout class="QVBoxLayout" name="verticalLayout_Averaging">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_19">
+              <layout class="QHBoxLayout" name="horizontalLayout_OCTCheckBoxes">
                <item>
-                <widget class="QCheckBox" name="Aver_checkBox">
+                <widget class="QCheckBox" name="AveragingCheckBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>15</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
@@ -1220,9 +1579,15 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="Zero_padding_checkBox">
+                <widget class="QCheckBox" name="ZeroPaddingCheckBox">
                  <property name="enabled">
                   <bool>false</bool>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>15</height>
+                  </size>
                  </property>
                  <property name="font">
                   <font>
@@ -1244,9 +1609,15 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <layout class="QHBoxLayout" name="horizontalLayout_ATimeSleep">
              <item>
-              <widget class="QLabel" name="label_8">
+              <widget class="QLabel" name="label_idle_time">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>8</pointsize>
@@ -1258,12 +1629,18 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>A-scan delay (s)</string>
+                <string>A-scan idle (s)</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="intid">
+              <widget class="QLineEdit" name="a_idle_time">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1281,9 +1658,15 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <layout class="QHBoxLayout" name="horizontalLayout_Averaging">
              <item>
               <widget class="QLabel" name="aver_num_label">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>8</pointsize>
@@ -1300,7 +1683,13 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="innum">
+              <widget class="QLineEdit" name="avg_num_ui">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1319,12 +1708,24 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="SET_OCTParams">
+            <widget class="QPushButton" name="SetOCTParamsButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -1350,9 +1751,9 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="Process_params">
+       <widget class="QGroupBox" name="group_PostProcessParams">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -1387,11 +1788,17 @@ p, li { white-space: pre-wrap; }
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
+          <layout class="QVBoxLayout" name="verticalLayout_PostProcessParams">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_16">
+            <layout class="QHBoxLayout" name="horizontalLayout_PresetParams">
              <item>
-              <widget class="QRadioButton" name="NIR_radio">
+              <widget class="QRadioButton" name="Preset2Radio">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>8</pointsize>
@@ -1403,7 +1810,7 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Range1</string>
+                <string>PRESET2</string>
                </property>
                <property name="checked">
                 <bool>false</bool>
@@ -1411,7 +1818,13 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="MIR_radio">
+              <widget class="QRadioButton" name="Preset1Radio">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>8</pointsize>
@@ -1423,7 +1836,7 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Range2</string>
+                <string>PRESET1</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -1433,7 +1846,13 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <widget class="QLabel" name="label_7">
+            <widget class="QLabel" name="label_Bandwidth">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>15</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <pointsize>8</pointsize>
@@ -1450,9 +1869,15 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <layout class="QHBoxLayout" name="horizontalLayout_Bandwidth">
              <item>
-              <widget class="QLineEdit" name="inwl">
+              <widget class="QLineEdit" name="wave_left_ui">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1468,7 +1893,13 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="inwh">
+              <widget class="QLineEdit" name="wave_right_ui">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1479,16 +1910,22 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>4472</string>
+                <string>4220</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QHBoxLayout" name="horizontalLayout_GaussianSigma">
              <item>
               <widget class="QLabel" name="label_6">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>8</pointsize>
@@ -1500,12 +1937,18 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Gaussian window (px)</string>
+                <string>Gaussian sigma (spl)</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="ingw">
+              <widget class="QLineEdit" name="gaussian_std_ui">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1523,9 +1966,15 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <layout class="QHBoxLayout" name="horizontalLayout_GaussianWindowPos">
              <item>
-              <widget class="QLabel" name="label_10">
+              <widget class="QLabel" name="label_GaussianPos">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>8</pointsize>
@@ -1542,7 +1991,13 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="ina">
+              <widget class="QLineEdit" name="gaussian_pos_ui">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -1560,12 +2015,24 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="APPLY_procparams">
+            <widget class="QPushButton" name="SetProcParamsButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -1586,12 +2053,24 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="ApplyPPC">
+            <widget class="QPushButton" name="ApplyProcButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -1611,9 +2090,9 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="ReferencingBox">
+       <widget class="QGroupBox" name="group_ReferencingBox">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -1627,7 +2106,7 @@ p, li { white-space: pre-wrap; }
         <property name="maximumSize">
          <size>
           <width>350</width>
-          <height>16777215</height>
+          <height>150</height>
          </size>
         </property>
         <property name="font">
@@ -1647,9 +2126,27 @@ p, li { white-space: pre-wrap; }
             <number>10</number>
            </property>
            <item row="3" column="0">
-            <widget class="QPushButton" name="ref_BUTTON">
+            <widget class="QPushButton" name="ReferenceButton">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -1673,7 +2170,13 @@ p, li { white-space: pre-wrap; }
            <item row="0" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_13">
              <item>
-              <widget class="QLabel" name="aver_num_label_3">
+              <widget class="QLabel" name="label_RefAvergNumber">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>8</pointsize>
@@ -1690,12 +2193,18 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="inrefnum">
+              <widget class="QLineEdit" name="ref_avg_num_ui">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
                </property>
                <property name="maximumSize">
                 <size>
@@ -1721,6 +2230,12 @@ p, li { white-space: pre-wrap; }
            </item>
            <item row="1" column="0">
             <widget class="QProgressBar" name="refprogressBar">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>15</height>
+              </size>
+             </property>
              <property name="styleSheet">
               <string notr="true"/>
              </property>
@@ -1732,12 +2247,24 @@ p, li { white-space: pre-wrap; }
           </layout>
          </item>
          <item row="1" column="0">
-          <widget class="QPushButton" name="ResetRef_button">
+          <widget class="QPushButton" name="ResetReferenceButton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>20</height>
+            </size>
            </property>
            <property name="font">
             <font>
@@ -1763,7 +2290,7 @@ p, li { white-space: pre-wrap; }
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_12">
+     <layout class="QVBoxLayout" name="Layout_Signal">
       <item>
        <widget class="PlotWidget" name="raw_signal_plot" native="true">
         <property name="sizePolicy">
@@ -1774,7 +2301,7 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="minimumSize">
          <size>
-          <width>100</width>
+          <width>350</width>
           <height>0</height>
          </size>
         </property>
@@ -1787,7 +2314,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_2">
+       <widget class="QGroupBox" name="groupBox_SamplingParams">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -1818,7 +2345,7 @@ p, li { white-space: pre-wrap; }
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
-          <widget class="QLabel" name="ACQ_range_label">
+          <widget class="QLabel" name="label_AcqRange">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1842,9 +2369,9 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_30">
+          <layout class="QHBoxLayout" name="horizontalLayout_SamplingRange">
            <item>
-            <widget class="QLineEdit" name="rang_start">
+            <widget class="QLineEdit" name="sampling_start_ui">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1854,7 +2381,7 @@ p, li { white-space: pre-wrap; }
              <property name="minimumSize">
               <size>
                <width>15</width>
-               <height>0</height>
+               <height>15</height>
               </size>
              </property>
              <property name="font">
@@ -1869,12 +2396,18 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="rang_stop">
+            <widget class="QLineEdit" name="sampling_stop_ui">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>15</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -1890,11 +2423,11 @@ p, li { white-space: pre-wrap; }
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <layout class="QHBoxLayout" name="horizontalLayout_SamplingButtons">
            <item>
-            <widget class="QPushButton" name="stop_acq_BUTTON">
+            <widget class="QPushButton" name="StopAcqButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1902,7 +2435,13 @@ p, li { white-space: pre-wrap; }
              <property name="minimumSize">
               <size>
                <width>15</width>
-               <height>10</height>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
               </size>
              </property>
              <property name="font">
@@ -1926,7 +2465,7 @@ p, li { white-space: pre-wrap; }
 </string>
              </property>
              <property name="text">
-              <string>Set delay</string>
+              <string>Unused Button</string>
              </property>
              <property name="shortcut">
               <string/>
@@ -1949,9 +2488,9 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="start_acq_BUTTON">
+            <widget class="QPushButton" name="SetRangeButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1959,7 +2498,13 @@ p, li { white-space: pre-wrap; }
              <property name="minimumSize">
               <size>
                <width>15</width>
-               <height>10</height>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
               </size>
              </property>
              <property name="font">
@@ -2011,14 +2556,14 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_17">
+       <layout class="QHBoxLayout" name="by_me_section">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_11">
+         <layout class="QVBoxLayout" name="verticalLayout_by_me">
           <property name="spacing">
            <number>7</number>
           </property>
           <item>
-           <widget class="QLabel" name="labelsupuvir_2">
+           <widget class="QLabel" name="by_me">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -2027,18 +2572,26 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="font">
              <font>
-              <family>Segoe UI Light</family>
+              <family>MS Shell Dlg 2</family>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">color:white;</string>
+             <string notr="true"/>
             </property>
             <property name="text">
-             <string>Digital Inspection and Quality Assurance
-for Lithography-based Ceramics Additive Manufacturing</string>
+             <string>2023 by Ivan Zorin</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::PlainText</enum>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2061,7 +2614,7 @@ for Lithography-based Ceramics Additive Manufacturing</string>
           <property name="maximumSize">
            <size>
             <width>50</width>
-            <height>60</height>
+            <height>50</height>
            </size>
           </property>
           <property name="frameShape">
@@ -2071,13 +2624,16 @@ for Lithography-based Ceramics Additive Manufacturing</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>../../Users/r.zor/.designer/backup/logo/rlogo.png</pixmap>
+           <pixmap>icon.ico</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
           </property>
+          <property name="wordWrap">
+           <bool>false</bool>
+          </property>
           <property name="margin">
-           <number>10</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
@@ -2087,7 +2643,6 @@ for Lithography-based Ceramics Additive Manufacturing</string>
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
