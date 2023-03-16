@@ -7,6 +7,8 @@ Created on Tue May 21 15:08:51 2019
 
 pyside2-uic design_gui.ui -o proc_ui.py
 
+pyside2-uic help_ui.ui -o help_ui.py
+
 # from PySide2 import uic
 # import PySide.QtUiTools
 

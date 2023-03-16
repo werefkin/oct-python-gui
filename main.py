@@ -263,22 +263,16 @@ class win(QtWidgets.QMainWindow):
         self.ui.FolderLine.setText('{}'.format(directory))
 
     def openWindow(self):
-        os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
-        os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
-        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
         self.about = QtWidgets.QMainWindow()
         self.uis = Ui_HelpWindow()
         self.uis.setupUi(self.about)
         self.uis.OKCloseButton.clicked.connect(self.closeWindow)
         self.about = qtmodern.windows.ModernWindow(self.about)
-
-        xa = QtGui.QDesktopWidget().screenGeometry().center().x()
-        ya = QtGui.QDesktopWidget().screenGeometry().center().y()
+        qr = self.about.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.about.move(qr.topLeft())
         self.about.show()
-        self.about.move(
-            xa - self.about.geometry().width() / 2,
-            ya - self.about.geometry().height() / 2)
 
     def closeWindow(self):
         print('q')
@@ -1183,5 +1177,9 @@ if __name__ == "__main__":
     qtmodern.styles.dark(app)
     mwins = win()
     mwins = qtmodern.windows.ModernWindow(mwins)
+    qr = mwins.frameGeometry()
+    cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+    qr.moveCenter(cp)
+    mwins.move(qr.topLeft())
     mwins.show()
     sys.exit(app.exec_())
