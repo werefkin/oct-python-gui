@@ -19,9 +19,8 @@ from scipy.signal import decimate
 import tifffile as tif
 import os
 import PySide2
-
-# from modules.space import *
-# from buff import GetBufferThread
+from shared_vars import SharedVariables
+from get_buffer_thread import GetBufferThread
 
 
 dirname = os.path.dirname(PySide2.__file__)
@@ -55,7 +54,6 @@ class win(QtWidgets.QMainWindow):
         global samples_num
         global b_scan
         global gaussian_pos
-        global buffer_signal
         global interm_output
         global gaussian_window
         global raw_data
@@ -63,10 +61,10 @@ class win(QtWidgets.QMainWindow):
         global flag, measurement_flag, inloop_flag
         global decimation_factor
 
+        self.shared_vars = SharedVariables()
         # General parameters
         if 'reference_spectrum' not in globals():
             reference_spectrum = np.load('./reference/ref.npy')
-        buffer_signal = reference_spectrum
         # PRESET PARAMETERS
         wave_left = 3235.6
         wave_right = 4472.27
@@ -92,15 +90,15 @@ class win(QtWidgets.QMainWindow):
 
 
 #       THREADS
-        self.buffer_thread = GetBufferThread(self)
+        self.buffer_thread = GetBufferThread(self.shared_vars)
         self.save_thread = SaveDataThread(self)
-        self.bscan_measurement_thread = BScanMeasureThread(self)
-        self.cscan_measurement_thread = VolumeScanningThread(self)
+        self.bscan_measurement_thread = BScanMeasureThread(self.shared_vars)
+        self.cscan_measurement_thread = VolumeScanningThread(self.shared_vars)
 
         self.save_params_thread = SaveParamsThread(self)
 
-        self.referencing_thread = GetReferenceThread(self)
-        self.sys_init_thread = InitializationThread(self)
+        self.referencing_thread = GetReferenceThread(self.shared_vars)
+        self.sys_init_thread = InitializationThread(self.shared_vars)
         self.ystage_init_thread = YstageInitThread(self)
         self.post_process_thread = PostProcessingThread(self)
         self.y_stage_up = YMoveUpByThread(self)
@@ -151,6 +149,7 @@ class win(QtWidgets.QMainWindow):
         self.ui.SaveButton.clicked.connect(self.save_thread.start)
 
         self.ui.SetRangeButton.clicked.connect(self.resarray)
+        self.ui.SetRangeButton.clicked.connect(self.buffer_thread.start)
         self.ui.StopAcqButton.clicked.connect(self.stop_spectrometer)
         self.ui.actionAbout.triggered.connect(self.openWindow)
         self.ui.ApplyProcButton.clicked.connect(self.post_process_thread.start)
@@ -280,8 +279,7 @@ class win(QtWidgets.QMainWindow):
 
     def update(self):
         #        self.value=np.random.rand(510)
-        global buffer_signal
-        self.ui.curve.setData(decimate(buffer_signal, decimation_factor, axis=0))
+        self.ui.curve.setData(decimate(self.shared_vars.buffer_signal, decimation_factor, axis=0))
 
     def set_cscan_parameters(self):
         global ystep
@@ -348,18 +346,15 @@ class win(QtWidgets.QMainWindow):
 
     def set_init_parameters(self):
         # READ OUT GUI PARAMS TO SET THEM
-        global sample_min
-        global sample_max
+
         global delay
         # Part of buff <samples_num>
-        sample_min = int(self.ui.sampling_start_ui.text())
-        sample_max = int(self.ui.sampling_stop_ui.text())
+        self.shared_vars.sample_min = int(self.ui.sampling_start_ui.text())
+        self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
         delay = str(self.ui.trig_delay.text())
 
     def reset_parameters(self):
         # READ OUT GUI PARAMS TO SET THEM
-        global sample_min
-        global sample_max
         global samples_num
         global refern
         global scanrange
@@ -370,9 +365,10 @@ class win(QtWidgets.QMainWindow):
         global delay
 
         # Part of buff <samples_num>
-        sample_min = int(self.ui.sampling_start_ui.text())
-        sample_max = int(self.ui.sampling_stop_ui.text())
-        samples_num = sample_max - sample_min
+        self.shared_vars.sample_min = int(self.ui.sampling_start_ui.text())
+        self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
+        samples_num = self.shared_vars.sample_max - self.shared_vars.sample_min
+        print(samples_num)
         scanrange = np.flip(np.arange(xstop_coordinate, xstart_coordinate + x_step, x_step), 0)
         refern = np.zeros([ref_avg_num, samples_num])
         # spectarr = (c_float*510)()
@@ -500,9 +496,12 @@ class win(QtWidgets.QMainWindow):
 
     def stop_spectrometer(self):
         print('Stopped')
+        print(self.shared_vars.flag)
+        self.shared_vars.flag = 1
 
     def resarray(self):
-        self.ui.logbrowser.append('Parameters (re)set')
+        self.ui.logbrowser.append('Parameters (re)set, (re)start')
+        self.shared_vars.flag = 0
 
     def status_ui_measurements_started(self):
         self.ui.InitButton.setEnabled(False)
@@ -520,6 +519,7 @@ class win(QtWidgets.QMainWindow):
         if reply == QMessageBox.Yes:
             event.accept()
             flag = 1
+            self.shared_vars.flag = 1
             # self.ui.BscanWidget.deleteLater()
             # self.ui.curve.deleteLater()
             time.sleep(1)
@@ -540,8 +540,9 @@ class GetReferenceThread(QtCore.QThread):
     refprog = QtCore.Signal(object)
     refdone = QtCore.Signal(object)
 
-    def __init__(self, parent=win):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         global measurement_flag, reference_spectrum
@@ -550,8 +551,7 @@ class GetReferenceThread(QtCore.QThread):
             if measurement_flag == 0:
                 measurement_flag = 1
                 break
-            global buffer_signal
-            rvalue = buffer_signal
+            rvalue = self.shared_vars.buffer_signal
             refern[i, :] = rvalue
 
             self.refprogress = (i + 1) / len(refern) * 100
@@ -614,8 +614,9 @@ class VolumeScanningThread(QtCore.QThread):
     mdat = QtCore.Signal(object)
     meas_status = QtCore.Signal(object)
 
-    def __init__(self, parent=None):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         start_time = time.time()
@@ -627,7 +628,6 @@ class VolumeScanningThread(QtCore.QThread):
         global ystep
         global ystart_coordinate
         global ystop_coordinate
-        global buffer_signal
         global avg_num
         global ref_avg_num
         global x_step
@@ -643,7 +643,6 @@ class VolumeScanningThread(QtCore.QThread):
         global gaussian_pos
         global wave_left
         global wave_right
-        global buffer_signal
         global b_scan
         global flag
         global measurement_flag
@@ -688,9 +687,9 @@ class VolumeScanningThread(QtCore.QThread):
                         'mm ',
                         "Spectrum number: ",
                         i)
-                    data[:, i] = np.flip(buffer_signal, 0)
+                    data[:, i] = np.flip(self.shared_vars.buffer_signal, 0)
                     # FOR FUTHER FFT AVERAGING
-                    ascanav[:, i, itn] = np.flip(buffer_signal, 0)
+                    ascanav[:, i, itn] = np.flip(self.shared_vars.buffer_signal, 0)
                     time.sleep(idle_time)
                     if flag != 0:
                         break
@@ -755,8 +754,9 @@ class BScanMeasureThread(QtCore.QThread):
     mdat = QtCore.Signal(object)
     meas_status = QtCore.Signal(object)
 
-    def __init__(self, parent=None):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         err = 0
@@ -800,10 +800,7 @@ class BScanMeasureThread(QtCore.QThread):
                         inloop_flag = 1
                         break
                     time.sleep(idle_time)
-                    global buffer_signal
-                    data[:, i] = np.flip(buffer_signal, 0)
-            #                data[:,i] = sosfiltfilt(soss, data[:,i])
-
+                    data[:, i] = np.flip(self.shared_vars.buffer_signal, 0)
                 interm_output[:, itn] = np.mean(data, 1)
 
                 avft = np.flip(np.rot90(data, 1), 1)
@@ -940,13 +937,12 @@ class InitializationThread(QtCore.QThread):
     initdone = QtCore.Signal(object)
     init_status = QtCore.Signal(object)
 
-    def __init__(self, parent=win):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         global shutt
-        global sample_min
-        global sample_max
         global samples_num
         global scanrange
         global refern
@@ -975,11 +971,9 @@ class InitializationThread(QtCore.QThread):
         # define here your signal source
 
         # Number of samples
-        samples_num = sample_max - sample_min
-
-        stagesn = '0115500223'
-        # stagesn='020550328'
-
+        samples_num = self.shared_vars.sample_max - self.shared_vars.sample_min
+        self.init_msg = '\nNumber of samples: ' + str(samples_num)
+        self.init_status.emit(self.init_msg)
         b, a = scisig.butter(4, 0.0005, btype='highpass')
 
         # GLOBAL EMPTHY VARIABLES
@@ -1116,18 +1110,6 @@ class SaveDataThread(QtCore.QThread):
             # self.ui.logbrowser.append('b_scan cannot be saved, EmptyData')
 
 
-class GetBufferThread(QtCore.QThread):
-
-    def __init__(self, parent=win):
-        QtCore.QThread.__init__(self, parent)
-
-    def run(self):
-        global flag, buffer_signal
-        self.active = True
-        while flag == 0:
-            buffer_signal = np.random.rand(16384)[sample_min:sample_max]
-
-
 class SaveParamsThread(QtCore.QThread):
     status = QtCore.Signal(object)
 
@@ -1150,7 +1132,6 @@ class SaveParamsThread(QtCore.QThread):
         global samples_num
         global b_scan
         global gaussian_pos
-        global buffer_signal
         global interm_output
         global gaussian_window
         global raw_data
