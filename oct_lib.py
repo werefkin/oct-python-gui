@@ -56,66 +56,20 @@ def remap_to_k(data, ref_spectrum, wave_min, wave_max, cal_vector=None, boundari
     return (spectral_interferograms)
 
 
-def scanProcess(
-        swn,
-        typ='n',
-        N=20,
-        Wn=0.01,
-        dpmin=0,
-        dpmax=45,
-        px=510,
-        a=0,
-        Std=25,
-        zp=0,
-        pads=0):
+def scanProcess(lin_spe_int, gauss_win):
     """
-    swn - spectrums in k-space
+    lin_spe_int - spectrums in k-space
     typ - 's' - substraction of the envelope (less noise), typ='d' is division
-
-    Std - standard deviation
-    a - Position of the gaussian window
-    px - number of pixels
-    N  - The order of the envelope freq filter.
-    Wn : Nyqust freqs from o to 1 (see scipy.signal.butter)
-
-    dpmin and dpmax: interval where the signal should be zero to remove very high values after division
 
     RETURNS OCT B-SCAN
 
     """
-    # CREATE GAUSSIAN WINDOW
-    x = np.linspace(-(px - 1) / 2, (px - 1) / 2, px)
-    gw = np.exp(-1 / 2 * ((x - a) / (4 * Std))**2)
-
     # CREATE ARRAYS FOR DATA
-    # of intermediate data
-    # postprocess = np.zeros([len(swn), len(swn[0])])
-    scan = np.zeros([len(swn), len(swn[0])])
-    # amplitude_envelope = np.zeros([len(swn), len(swn[0])])
+    scan = np.zeros([len(lin_spe_int), len(lin_spe_int[0])])
 
-    # FILTER
     # compute the windowed signal
-
     # compute the FFT of the windowed signal
-    scan = np.abs(np.fft.fftshift(np.fft.fft(swn * gw, axis=1), axes=1))
-    # # POSTPROCESSING
-    # for i in range(0, len(swn)):
-
-    #     signal = swn[i, :]
-
-    #     analytic_signal = hilbert(signal)  # Hilbert transform
-    #     amplitude_envelope[i, :] = np.abs(analytic_signal)  # Envelope
-    #     # amplitude_envelope[i,:] = sosfiltfilt(sos, amplitude_envelope[i,:])
-    #     # #Filtering of the envelope
-
-    #     if typ == 'd':
-    #         # Applying of the filter and envelope substraction or division
-    #         postprocess[i, :] = (signal / amplitude_envelope[i, :]) * gw
-    #     elif typ == 's':
-    #         postprocess[i, :] = (signal - amplitude_envelope[i, :]) * gw
-    #     elif typ == 'n':
-    #         postprocess[i, :] = signal * gw
-    #     scan[i, :] = np.abs(np.fft.fftshift(np.fft.fft(postprocess[i, :])))
+    scan = np.abs(np.fft.fftshift(np.fft.fft(lin_spe_int * gauss_win, axis=1), axes=1))
     # Save data in to array
     return scan
 

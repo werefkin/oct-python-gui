@@ -85,8 +85,8 @@ class win(QtWidgets.QMainWindow):
         # POST PROCESSING PRESET
         gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
                                  (samples_num - 1) / 2, samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        gaussian_window = np.interp(
-            gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
+        # gaussian_window = np.interp(
+        #     gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
 
 
 #       THREADS
@@ -377,8 +377,8 @@ class win(QtWidgets.QMainWindow):
         outputfft = np.zeros([samples_num, len(scanrange)])
         gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
                                  (samples_num - 1) / 2, samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        gaussian_window = np.interp(
-            gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
+        # gaussian_window = np.interp(
+        #     gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
         self.ui.gaussian.setData(decimate(gaussian_window, decimation_factor, axis=0))
         delay = str(self.ui.trig_delay.text())
 
@@ -451,8 +451,8 @@ class win(QtWidgets.QMainWindow):
 
         gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
                                  (samples_num - 1) / 2, samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        gaussian_window = np.interp(
-            gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
+        # gaussian_window = np.interp(
+        #     gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
         self.ui.gaussian.setData(decimate(gaussian_window, decimation_factor, axis=0))
 
     def preset2_mode(self):
@@ -470,8 +470,8 @@ class win(QtWidgets.QMainWindow):
         self.ui.aspect_ratio.setText('1')
         gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
                                  (samples_num - 1) / 2, samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        gaussian_window = np.interp(
-            gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
+        # gaussian_window = np.interp(
+        #     gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
         self.ui.gaussian.setData(decimate(gaussian_window, decimation_factor, axis=0))
 
     def preset1_mode(self):
@@ -490,8 +490,8 @@ class win(QtWidgets.QMainWindow):
         self.ui.aspect_ratio.setText('0.5')
         gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
                                  (samples_num - 1) / 2, samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        gaussian_window = np.interp(
-            gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
+        # gaussian_window = np.interp(
+        #     gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1, 1))
         self.ui.gaussian.setData(decimate(gaussian_window, decimation_factor, axis=0))
 
     def stop_spectrometer(self):
@@ -551,8 +551,7 @@ class GetReferenceThread(QtCore.QThread):
             if measurement_flag == 0:
                 measurement_flag = 1
                 break
-            rvalue = self.shared_vars.buffer_signal
-            refern[i, :] = rvalue
+            refern[i, :] = self.shared_vars.buffer_signal
 
             self.refprogress = (i + 1) / len(refern) * 100
             self.refprog.emit(self.refprogress)
@@ -696,7 +695,7 @@ class VolumeScanningThread(QtCore.QThread):
                 interm_output[:, itn] = np.mean(data, 1)
                 avft = np.flip(np.rot90(data, 1), 1)
                 outputfft[:, itn] = np.mean(scanProcess(np.flip(remap_to_k(
-                    avft, reference_spectrum, wave_left, wave_right, cal_vector, boundaries), 0), typ='n', px=samples_num, a=gaussian_pos, Std=gaussian_sigma), 0)
+                    avft, reference_spectrum, wave_left, wave_right, cal_vector, boundaries), 0), gaussian_window), 0)
 
                 len_counter = len_counter + 1
 
@@ -720,10 +719,7 @@ class VolumeScanningThread(QtCore.QThread):
                         cal_vector,
                         boundaries),
                     0),
-                typ='n',
-                px=samples_num,
-                a=gaussian_pos,
-                Std=gaussian_sigma)
+                gaussian_window)
             scanf = np.rot90(b_scan)
 
             vscan[zpos, :, :] = scanf[int(samples_num / 2):int(samples_num / 2) + 512, :]
@@ -767,7 +763,7 @@ class BScanMeasureThread(QtCore.QThread):
         global scans
         global flag
         global measurement_flag, inloop_flag
-
+        global gaussian_window
         if len(data) == len(reference_spectrum):
             self.ms_msg = 'Measurements started...\n' + 'b_scan length: ' + \
                 str(xstart_coordinate - xstop_coordinate) + 'mm\n' + 'Averaging: ' + str(avg_num)
@@ -805,7 +801,7 @@ class BScanMeasureThread(QtCore.QThread):
 
                 avft = np.flip(np.rot90(data, 1), 1)
                 outputfft[:, itn] = np.mean(scanProcess(np.flip(remap_to_k(
-                    avft, reference_spectrum, wave_left, wave_right, cal_vector, boundaries), 0), typ='n', px=samples_num, a=gaussian_pos, Std=gaussian_sigma), 0)
+                    avft, reference_spectrum, wave_left, wave_right, cal_vector, boundaries), 0), gaussian_window), 0)
                 if flag != 0:
                     break
             topost = np.flip(np.rot90(interm_output, 1), 1)
@@ -823,10 +819,7 @@ class BScanMeasureThread(QtCore.QThread):
                         cal_vector,
                         boundaries),
                     0),
-                typ='n',
-                px=samples_num,
-                a=gaussian_pos,
-                Std=gaussian_sigma)
+                gaussian_window)
             scanf = np.rot90(b_scan)
 
             # AVERAGE WITH MEAN FOURIER SPACE
@@ -895,10 +888,7 @@ class PostProcessingThread(QtCore.QThread):
                     cal_vector,
                     boundaries),
                 0),
-            typ='n',
-            px=samples_num,
-            a=gaussian_pos,
-            Std=gaussian_sigma)
+            gaussian_window)
         local_scanf = np.rot90(local_scan)
         # AVERAGE WITH MEAN FOURIER SPACE
 #        local_cuscus=np.average([norma(local_scanf[256:-1,:],norma=0),norma(local_outputfft[257:,:],norma=0)],0)
