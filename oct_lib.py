@@ -9,7 +9,7 @@ LIBRARY FUNCTIONS:
     in this code wavelengths assumed to be linear
 
     2. scanProcess performs postprocessing of the signal in following order:
-    (Hilbert transform --> Analytic signal --> Envelope --> High Pass Filter --> Gaussian window --> FFT)
+    (Gaussian window --> FFT) -- Removed: Hilbert transform --> Analytic signal --> Envelope --> High Pass Filter)
 
     3. depthAxis calculates depth axis you have after FFT according to number of pixels and spectrum bandwidth
 
@@ -23,12 +23,11 @@ from scipy.interpolate import interp1d
 kind1 = "quadratic"
 
 
-def remap_to_k(data, ref_spectrum, wave_min, wave_max, cal_vector=None, boundaries=None):
+def remap_to_k(data, ref_spectrum, wave_min, wave_max, cal_vector=None, boundaries=None, sa_num=16384):
     data = data - ref_spectrum
     if cal_vector is not None and boundaries is not None:
 
-        print("Calibration-vector based")
-        N = np.shape(data)[1]
+        # print("Calibration-vector based")
         remap_interp_func = interp1d(cal_vector,
                                      data[:,
                                           boundaries[0]:boundaries[-1]],
@@ -37,15 +36,14 @@ def remap_to_k(data, ref_spectrum, wave_min, wave_max, cal_vector=None, boundari
                                      fill_value="extrapolate")
         spectral_interferograms = remap_interp_func(np.linspace(
             boundaries[0], boundaries[-1], len(cal_vector), endpoint=True))
-        NN = (N - len(cal_vector)) / 2
+        NN = (sa_num - len(cal_vector)) / 2
         spectral_interferograms = np.pad(
             spectral_interferograms, ((0, 0), (int(NN), int(NN))), 'constant')
     else:
-        print("Standard processing")
-        N = np.shape(data)[1]
-        lambda_space_rang = np.linspace(wave_min, wave_max, N, endpoint=True)
+        # print("Standard processing")
+        lambda_space_rang = np.linspace(wave_min, wave_max, sa_num, endpoint=True)
         k_space_rang = 1 / lambda_space_rang
-        wn_corr = np.linspace(k_space_rang[0], k_space_rang[-1], N)
+        wn_corr = np.linspace(k_space_rang[0], k_space_rang[-1], sa_num)
         remap_interp_func = interp1d(
             k_space_rang,
             data,
