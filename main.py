@@ -16,7 +16,6 @@ from PySide2.QtCore import Slot
 import qtmodern.styles
 import qtmodern.windows
 from help_ui import Ui_HelpWindow
-import scipy.signal as scisig
 from scipy.signal import decimate
 import tifffile as tif
 import os
@@ -24,7 +23,7 @@ import PySide2
 import logging
 from ctypes import windll  # Change the timer resolution of Windows
 
-# Change the timer resolution of Windows
+# Change the timer resolution of Windows to 1 ms
 timeBeginPeriod = windll.winmm.timeBeginPeriod
 timeBeginPeriod(1)  # Change the timer resolution of Windows
 
@@ -685,7 +684,7 @@ class VolumeScanningThread(QtCore.QThread):
                 self.measprog.emit(self.progress)
                 if self.shared_vars.flag != 0:
                     break
-            topost = np.flip(np.rot90(self.shared_vars.interm_output, 1), 1)
+            self.to_ppost = np.flip(np.rot90(self.shared_vars.interm_output, 1), 1)
             if self.shared_vars.flag != 0:
                 break
 
@@ -693,7 +692,7 @@ class VolumeScanningThread(QtCore.QThread):
             self.shared_vars.b_scan = scanProcess(
                 np.flip(
                     remap_to_k(
-                        topost,
+                        self.to_ppost,
                         self.shared_vars.reference_spectrum,
                         self.shared_vars.wave_left,
                         self.shared_vars.wave_right,
@@ -787,14 +786,14 @@ class BScanMeasureThread(QtCore.QThread):
                                                            0)
                 if self.shared_vars.flag != 0:
                     break
-            topost = np.rot90(self.shared_vars.interm_output, 3)
-            self.shared_vars.raw_data = np.copy(topost)
+            self.shared_vars.interm_output = np.rot90(self.shared_vars.interm_output, 3)
+            self.shared_vars.raw_data = np.copy(self.shared_vars.interm_output)
 
             # PROCESS
             self.shared_vars.b_scan = scanProcess(
                 np.flip(
                     remap_to_k(
-                        topost,
+                        self.shared_vars.interm_output,
                         self.shared_vars.reference_spectrum,
                         self.shared_vars.wave_left,
                         self.shared_vars.wave_right,
@@ -851,11 +850,11 @@ class PostProcessingThread(QtCore.QThread):
         print(self.shared_vars.gaussian_sigma)
         print(self.shared_vars.gaussian_pos)
         # PROCESS
-        local_topost = np.copy(self.shared_vars.raw_data)
-        local_scan = scanProcess(
+        self.local_topost = np.copy(self.shared_vars.raw_data)
+        self.local_scan = scanProcess(
             np.flip(
                 remap_to_k(
-                    local_topost,
+                    self.local_topost,
                     self.shared_vars.reference_spectrum,
                     self.shared_vars.wave_left,
                     self.shared_vars.wave_right,
@@ -864,12 +863,12 @@ class PostProcessingThread(QtCore.QThread):
                     self.shared_vars.samples_num),
                 0),
             self.shared_vars.gaussian_window)
-        local_scanf = np.rot90(local_scan)
+        self.local_scanf = np.rot90(self.local_scan)
         # AVERAGE WITH MEAN FOURIER SPACE
-        local_purescn = local_scanf[int(self.shared_vars.samples_num / 2):int(
+        self.local_purescn = self.local_scanf[int(self.shared_vars.samples_num / 2):int(
             self.shared_vars.samples_num / 2 + self.shared_vars.z_sample_num), :]
-        self.shared_vars.b_scan = np.flip(local_purescn, 1)
-        del local_topost
+        self.shared_vars.b_scan = np.flip(self.local_purescn, 1)
+        del self.local_topost
 
 
 class YstageInitThread(QtCore.QThread):
@@ -919,7 +918,6 @@ class InitializationThread(QtCore.QThread):
         self.init_msg = '\nNumber of samples: ' + \
             str(self.shared_vars.samples_num)
         self.init_status.emit(self.init_msg)
-        b, a = scisig.butter(4, 0.0005, btype='highpass')
 
         # Example of initializing something
         if 'shutt' in locals():
@@ -985,13 +983,13 @@ class SaveDataThread(QtCore.QThread):
                 self.msg = 'Saved in ' + self.shared_vars.directory
                 self.status.emit(self.msg)
                 if np.shape(self.shared_vars.scans)[0] > 3:
-                    scans_to_save = 20 * \
+                    self.scans_to_save = 20 * \
                         np.log10(np.copy(self.shared_vars.scans) + self.shared_vars.log_coeff)
-                    scans_to_save = scans_to_save - np.min(scans_to_save)
-                    scans_to_save = scans_to_save / \
-                        np.max(scans_to_save) * 65536
-                    scans_to_save = scans_to_save[:, :, :]
-                    scans_to_save = scans_to_save.astype(np.uint16)
+                    self.scans_to_save = self.scans_to_save - np.min(self.scans_to_save)
+                    self.scans_to_save = self.scans_to_save / \
+                        np.max(self.scans_to_save) * 65536
+                    self.scans_to_save = self.scans_to_save[:, :, :]
+                    self.scans_to_save = self.scans_to_save.astype(np.uint16)
                     try:
                         tif.imwrite(
                             self.shared_vars.directory +
@@ -999,7 +997,7 @@ class SaveDataThread(QtCore.QThread):
                             self.shared_vars.filename +
                             datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
                             '.tif',
-                            scans_to_save,
+                            self.scans_to_save,
                             photometric='minisblack')
                         self.msg = 'Tif volume saved in ' + self.shared_vars.directory
                         self.status.emit(self.msg)
@@ -1011,7 +1009,7 @@ class SaveDataThread(QtCore.QThread):
                             self.shared_vars.filename +
                             datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
                             '.tif',
-                            scans_to_save,
+                            self.scans_to_save,
                             photometric='minisblack')
             except BaseException:
                 np.save(
@@ -1023,13 +1021,13 @@ class SaveDataThread(QtCore.QThread):
                 self.msg = 'Saved in ' + './data_output/'
                 self.status.emit(self.msg)
                 if np.shape(self.shared_vars.scans)[0] > 3:
-                    scans_to_save = 20 * \
+                    self.scans_to_save = 20 * \
                         np.log10(np.copy(self.shared_vars.scans) + self.shared_vars.log_coeff)
-                    scans_to_save = scans_to_save - np.min(scans_to_save)
-                    scans_to_save = scans_to_save / \
-                        np.max(scans_to_save) * 65536
-                    scans_to_save = scans_to_save[:, :, :]
-                    scans_to_save = scans_to_save.astype(np.uint16)
+                    self.scans_to_save = self.scans_to_save - np.min(self.scans_to_save)
+                    self.scans_to_save = self.scans_to_save / \
+                        np.max(self.scans_to_save) * 65536
+                    self.scans_to_save = self.scans_to_save[:, :, :]
+                    self.scans_to_save = self.scans_to_save.astype(np.uint16)
                     self.msg = 'Tif volume saved in ' + './data_output/'
                     self.status.emit(self.msg)
                     tif.imwrite(
@@ -1037,7 +1035,7 @@ class SaveDataThread(QtCore.QThread):
                         self.shared_vars.filename +
                         datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
                         '.tif',
-                        scans_to_save,
+                        self.scans_to_save,
                         photometric='minisblack')
         else:
             print('Empthy data')
