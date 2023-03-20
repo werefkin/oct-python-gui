@@ -18,6 +18,7 @@ LIBRARY FUNCTIONS:
 
 import numpy as np
 from scipy.interpolate import interp1d
+import time
 # from scipy.signal import hilbert
 
 kind1 = "quadratic"
@@ -62,18 +63,15 @@ def scanProcess(lin_spe_int, gauss_win):
     RETURNS OCT B-SCAN
 
     """
-    # CREATE ARRAYS FOR DATA
-    scan = np.zeros([len(lin_spe_int), len(lin_spe_int[0])])
-
-    # compute the windowed signal
     # compute the FFT of the windowed signal
     scan = np.abs(np.fft.fftshift(np.fft.fft(lin_spe_int * gauss_win, axis=1), axes=1))
     # Save data in to array
     return scan
 
 
-def norma(d, norma):
-    d -= np.min(d)
-    if norma == 1:
-        d = d / np.max(d)
-    return d
+def accurate_delay(wait):  # nanosecond resolution of the timer instead of time.sleep() (limited to 1 ms)
+    ''' Function to provide accurate time delay in millisecond
+    '''
+    _ = time.perf_counter_ns() + wait * 10e9
+    while time.perf_counter_ns() < _:
+        pass

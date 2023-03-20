@@ -4,7 +4,9 @@ from threading import Lock      # TO QUEUE THREADS FOR BUFFER_DATA (NOT USED)
 from datetime import datetime
 import time
 import numpy as np
-from oct_lib import remap_to_k, scanProcess
+from modules.oct_lib import remap_to_k, scanProcess
+from modules.shared_vars import SharedVariables
+from modules.get_buffer_thread import GetBufferThread
 import serial
 import serial.tools.list_ports
 import warnings
@@ -19,9 +21,12 @@ from scipy.signal import decimate
 import tifffile as tif
 import os
 import PySide2
-from shared_vars import SharedVariables
-from get_buffer_thread import GetBufferThread
 import logging
+from ctypes import windll  # Change the timer resolution of Windows
+
+# Change the timer resolution of Windows
+timeBeginPeriod = windll.winmm.timeBeginPeriod
+timeBeginPeriod(1)  # Change the timer resolution of Windows
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 dirname = os.path.dirname(PySide2.__file__)
@@ -36,66 +41,12 @@ class win(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        # GLOBALS
-        # Global variables -- shared as they are USEB BY SEVERAL THREADS
-        global wave_left
-        global wave_right
-        global gaussian_sigma
-        global reference_spectrum
-        global avg_num
-        global ref_avg_num
-        global x_step
-        global ystep
-        global xstart_coordinate
-        global xstop_coordinate
-        global ystart_coordinate
-        global ystop_coordinate
-        global idle_time
-        global data
-        global samples_num
-        global b_scan
-        global gaussian_pos
-        global interm_output
-        global gaussian_window
-        global raw_data
-        global directory
-        global flag, measurement_flag, inloop_flag
-        global decimation_factor
-
+        # Init variables
         self.shared_vars = SharedVariables()
-        # General parameters
-        if 'reference_spectrum' not in globals():
-            reference_spectrum = np.load('./reference/ref.npy')
-        # PRESET PARAMETERS
-        wave_left = 3235.6
-        wave_right = 4472.27
-        avg_num = 3  # Number of averaged measurements
-        ref_avg_num = 50
-        x_step = 0.04
-        xstart_coordinate = 3
-        xstop_coordinate = 0
-        idle_time = 0.05
-        gaussian_pos = 0
-        gaussian_sigma = 1500  # sigma, gaussian window parameter
-        flag = 0  # General flag showing if App is running
-        measurement_flag = 1
-        inloop_flag = 1
-        raw_data = np.zeros([100, 100])
-        samples_num = 16384
-        # to downsample Live signals (more efficient plotting)
-        decimation_factor = 20
-        # POST PROCESSING PRESET
-        gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
-                                                        (samples_num - 1) / 2,
-                                                        samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        # gaussian_window = np.interp(
-        # gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1,
-        # 1))
-
 
 #       THREADS
         self.buffer_thread = GetBufferThread(self.shared_vars)
-        self.save_thread = SaveDataThread(self)
+        self.save_thread = SaveDataThread(self.shared_vars)
         self.bscan_measurement_thread = BScanMeasureThread(self.shared_vars)
         self.cscan_measurement_thread = VolumeScanningThread(self.shared_vars)
 
@@ -104,7 +55,7 @@ class win(QtWidgets.QMainWindow):
         self.referencing_thread = GetReferenceThread(self.shared_vars)
         self.sys_init_thread = InitializationThread(self.shared_vars)
         self.ystage_init_thread = YstageInitThread(self)
-        self.post_process_thread = PostProcessingThread(self)
+        self.post_process_thread = PostProcessingThread(self.shared_vars)
         self.y_stage_up = YMoveUpByThread(self)
         self.y_stage_down = YMoveDownByThread(self)
         self.y_axis_move_to = YPositionToThread(self)
@@ -199,17 +150,21 @@ class win(QtWidgets.QMainWindow):
         self.x_axis_move_to.status.connect(self.addlogline)
 
 #        PLOTS
-        b_scan = np.load('./logo/preset.npy')[:155, :]
         self.ui.BscanWidget.show()
-        self.ui.BscanWidget.setImage(20 * np.log10(np.rot90(b_scan) + 0.1))
+        self.ui.BscanWidget.setImage(
+            20 *
+            np.log10(
+                np.rot90(
+                    self.shared_vars.b_scan) +
+                0.1))
         self.ui.BscanWidget.view.setAspectLocked(ratio=0.45)
         self.ui.BscanWidget.view.setBackgroundColor(None)
         self.ui.raw_signal_plot.addLegend()
         self.ui.raw_signal_plot.setBackground((35, 35, 35))
         self.ui.curve = self.ui.raw_signal_plot.plot(
             decimate(
-                np.zeros(samples_num),
-                decimation_factor,
+                np.zeros(self.shared_vars.samples_num),
+                self.shared_vars.decimation_factor,
                 axis=0),
             pen={
                 'color': (
@@ -220,8 +175,8 @@ class win(QtWidgets.QMainWindow):
             name='Live')
         self.ui.refcurve = self.ui.raw_signal_plot.plot(
             decimate(
-                reference_spectrum,
-                decimation_factor,
+                self.shared_vars.reference_spectrum,
+                self.shared_vars.decimation_factor,
                 axis=0),
             pen={
                 'color': (
@@ -232,8 +187,8 @@ class win(QtWidgets.QMainWindow):
             name='Reference')
         self.ui.gaussian = self.ui.raw_signal_plot.plot(
             decimate(
-                gaussian_window,
-                decimation_factor,
+                self.shared_vars.gaussian_window,
+                self.shared_vars.decimation_factor,
                 axis=0),
             pen={
                 'color': (
@@ -257,19 +212,17 @@ class win(QtWidgets.QMainWindow):
         self.ui.Preset1Radio.toggled.connect(self.preset1_mode)
 
         self.variable = 10
-        global param1
-        param1 = self.ui.param1.text()
+        self.shared_vars.param1 = self.ui.param1.text()
 
     def stop_measurements(self):
-        global measurement_flag, inloop_flag
-        measurement_flag = 0
-        inloop_flag = 0
+        self.shared_vars.measurement_flag = 0
+        self.shared_vars.inloop_flag = 0
 
     def _open_file_dialog(self):
-        global directory
-        directory = str(QtWidgets.QFileDialog.getExistingDirectory())
-        print(directory)
-        self.ui.FolderLine.setText('{}'.format(directory))
+        self.shared_vars.directory = str(
+            QtWidgets.QFileDialog.getExistingDirectory())
+        print(self.shared_vars.directory)
+        self.ui.FolderLine.setText('{}'.format(self.shared_vars.directory))
 
     def openWindow(self):
         self.about = QtWidgets.QMainWindow()
@@ -292,17 +245,15 @@ class win(QtWidgets.QMainWindow):
         self.ui.curve.setData(
             decimate(
                 self.shared_vars.buffer_signal,
-                decimation_factor,
+                self.shared_vars.decimation_factor,
                 axis=0))
 
     def set_cscan_parameters(self):
-        global ystep
-        global ystart_coordinate
-        global ystop_coordinate
 
-        ystep = float(self.ui.y_step.text())
-        ystart_coordinate = float(self.ui.ui_y_start_pos.text())
-        ystop_coordinate = float(self.ui.ui_y_stop_pos.text())
+        self.shared_vars.ystep = float(self.ui.y_step.text())
+        self.shared_vars.ystart_coordinate = float(
+            self.ui.ui_y_start_pos.text())
+        self.shared_vars.ystop_coordinate = float(self.ui.ui_y_stop_pos.text())
 
     def activatemeas(self):
         self.ui.Bscan_MeasureButton.setEnabled(True)
@@ -317,12 +268,12 @@ class win(QtWidgets.QMainWindow):
         self.ui.YStageMoveToButton.setEnabled(True)
 
     def reset_ref(self):
-        global reference_spectrum
-        reference_spectrum = np.zeros(samples_num)
+        self.shared_vars.reference_spectrum = np.zeros(
+            self.shared_vars.samples_num)
         self.ui.refcurve.setData(
             decimate(
-                reference_spectrum,
-                decimation_factor,
+                self.shared_vars.reference_spectrum,
+                self.shared_vars.decimation_factor,
                 axis=0))
 
     def measprogress(self, pbar):
@@ -333,27 +284,24 @@ class win(QtWidgets.QMainWindow):
         self.ui.logbrowser.append(status_text)
 
     def save(self):
-        global filename
-        global logcoeff
-        filename = self.ui.filenameline.text()
-        logcoeff = float(self.ui.log10_coef.text())
+        self.shared_vars.filename = self.ui.filenameline.text()
+        self.shared_vars.log_coeff = float(self.ui.log10_coef.text())
 
     def refprogress(self, rpbar):
         self.ui.refprogressBar.setValue(int(rpbar))
 
     def plotref(self):
-        global reference_spectrum
         self.ui.refcurve.setData(
             decimate(
-                reference_spectrum,
-                decimation_factor,
+                self.shared_vars.reference_spectrum,
+                self.shared_vars.decimation_factor,
                 axis=0))
 
     def graph(self):
         self.ui.BscanWidget.setImage(
             20 *
             np.log10(
-                np.rot90(b_scan) +
+                np.rot90(self.shared_vars.b_scan) +
                 float(
                     self.ui.log10_coef.text())))
         self.ui.BscanWidget.view.setAspectLocked(
@@ -361,212 +309,177 @@ class win(QtWidgets.QMainWindow):
         self.ui.logbrowser.append('Data visualized successfully')
 
     def set_acq_parameters(self):
-        global delay
-        global param1
-        param1 = self.ui.param1.text()
-        print(param1)
+        self.shared_vars.param1 = self.ui.param1.text()
 
     def set_init_parameters(self):
         # READ OUT GUI PARAMS TO SET THEM
 
-        global delay
-        # Part of buff <samples_num>
+        # Part of buff <self.shared_vars.samples_num>
         self.shared_vars.sample_min = int(self.ui.sampling_start_ui.text())
         self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
-        delay = str(self.ui.trig_delay.text())
+        self.shared_vars.sig_delay = str(self.ui.trig_delay.text())
 
     def reset_parameters(self):
         # READ OUT GUI PARAMS TO SET THEM
-        global samples_num
-        global refern
-        global scanrange
-        global refern
-        global data
-        global interm_output
-        global outputfft
-        global delay
-        global gaussian_window
-        # Part of buff <samples_num>
+        # Part of buff <self.shared_vars.samples_num>
         self.shared_vars.sample_min = int(self.ui.sampling_start_ui.text())
         self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
-        samples_num = self.shared_vars.sample_max - self.shared_vars.sample_min
-        print(samples_num)
-        scanrange = np.flip(
+        self.shared_vars.samples_num = self.shared_vars.sample_max - \
+            self.shared_vars.sample_min
+        print(self.shared_vars.samples_num)
+        self.shared_vars.scan_range = np.flip(
             np.arange(
-                xstop_coordinate,
-                xstart_coordinate +
-                x_step,
-                x_step),
+                self.shared_vars.xstop_coordinate,
+                self.shared_vars.xstart_coordinate +
+                self.shared_vars.x_step,
+                self.shared_vars.x_step),
             0)
-        refern = np.zeros([ref_avg_num, samples_num])
+        self.shared_vars.refer_arr = np.zeros(
+            [self.shared_vars.ref_avg_num, self.shared_vars.samples_num])
         # spectarr = (c_float*510)()
-        data = np.zeros([samples_num, avg_num])
-        interm_output = np.zeros([samples_num, len(scanrange)])
-        outputfft = np.zeros([samples_num, len(scanrange)])
-        gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
-                                                        (samples_num - 1) / 2,
-                                                        samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        # gaussian_window = np.interp(
-        # gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1,
+        self.shared_vars.data = np.zeros(
+            [self.shared_vars.samples_num, self.shared_vars.avg_num])
+        self.shared_vars.interm_output = np.zeros(
+            [self.shared_vars.samples_num, len(self.shared_vars.scan_range)])
+        self.shared_vars.output_fft = np.zeros(
+            [self.shared_vars.samples_num, len(self.shared_vars.scan_range)])
+        self.shared_vars.gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(self.shared_vars.samples_num - 1) / 2,
+                                                                         (self.shared_vars.samples_num - 1) / 2,
+                                                                         self.shared_vars.samples_num) - self.shared_vars.gaussian_pos) / (4 * self.shared_vars.gaussian_sigma))**2)
+        # self.shared_vars.gaussian_window = np.interp(
+        # self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (-1,
         # 1))
         self.ui.gaussian.setData(
             decimate(
-                gaussian_window,
-                decimation_factor,
+                self.shared_vars.gaussian_window,
+                self.shared_vars.decimation_factor,
                 axis=0))
-        delay = str(self.ui.trig_delay.text())
+        self.shared_vars.sig_delay = str(self.ui.trig_delay.text())
 
     def get_startpos(self):
-        global ystart_coordinate
-        ystart_coordinate = float(self.ui.ui_y_start_pos.text())
-        global xstart_coordinate
-        xstart_coordinate = float(self.ui.x_start_pos_ui.text())
+        self.shared_vars.ystart_coordinate = float(
+            self.ui.ui_y_start_pos.text())
+        self.shared_vars.xstart_coordinate = float(
+            self.ui.x_start_pos_ui.text())
 
     def set_octparameters(self):
-        global avg_num
-        global ref_avg_num
-        global x_step
-        global xstart_coordinate
-        global xstop_coordinate
-        global idle_time
-        global data
-        global refern
-        global scanrange
-        global outputfft
-        global interm_output
-        global gaussian_sigma
-        global gaussian_pos
-        global ystep
-        global ystart_coordinate
-        global ystop_coordinate
-
         if self.ui.AveragingCheckBox.isChecked():
             print('Averaging mode')
             # Number of averaged pixels
-            avg_num = int(self.ui.avg_num_ui.text())
+            self.shared_vars.avg_num = int(self.ui.avg_num_ui.text())
         else:
             print('No averaging')
-            avg_num = 1  # Number of averaged pixels
+            self.shared_vars.avg_num = 1  # Number of averaged pixels
 
-        ref_avg_num = int(self.ui.ref_avg_num_ui.text())
-        print(ref_avg_num)
-        x_step = float(self.ui.x_step_ui.text())
-        xstart_coordinate = float(self.ui.x_start_pos_ui.text())
-        xstop_coordinate = float(self.ui.x_stop_pos_ui.text())
+        self.shared_vars.ref_avg_num = int(self.ui.ref_avg_num_ui.text())
+        print(self.shared_vars.ref_avg_num)
+        self.shared_vars.x_step = float(self.ui.x_step_ui.text())
+        self.shared_vars.xstart_coordinate = float(
+            self.ui.x_start_pos_ui.text())
+        self.shared_vars.xstop_coordinate = float(self.ui.x_stop_pos_ui.text())
 
-        ystep = float(self.ui.y_step.text())
-        ystart_coordinate = float(self.ui.ui_y_start_pos.text())
-        ystop_coordinate = float(self.ui.ui_y_stop_pos.text())
+        self.shared_vars.ystep = float(self.ui.y_step.text())
+        self.shared_vars.ystart_coordinate = float(
+            self.ui.ui_y_start_pos.text())
+        self.shared_vars.ystop_coordinate = float(self.ui.ui_y_stop_pos.text())
 
-        idle_time = float(self.ui.a_idle_time.text())
+        self.shared_vars.idle_time = float(self.ui.a_idle_time.text())
 
-        data = np.zeros([samples_num, avg_num])
-        refern = np.zeros([ref_avg_num, samples_num])
-        scanrange = np.flip(
+        self.shared_vars.data = np.zeros(
+            [self.shared_vars.samples_num, self.shared_vars.avg_num])
+        self.shared_vars.refer_arr = np.zeros(
+            [self.shared_vars.ref_avg_num, self.shared_vars.samples_num])
+        self.shared_vars.scan_range = np.flip(
             np.arange(
-                xstop_coordinate,
-                xstart_coordinate +
-                x_step,
-                x_step),
+                self.shared_vars.xstop_coordinate,
+                self.shared_vars.xstart_coordinate +
+                self.shared_vars.x_step,
+                self.shared_vars.x_step),
             0)
 
-        interm_output = np.zeros([samples_num, len(scanrange)])
-        outputfft = np.zeros([samples_num, len(scanrange)])
+        self.shared_vars.interm_output = np.zeros(
+            [self.shared_vars.samples_num, len(self.shared_vars.scan_range)])
+        self.shared_vars.output_fft = np.zeros(
+            [self.shared_vars.samples_num, len(self.shared_vars.scan_range)])
 
     def set_postprocessparameters(self):
-
-        global wave_left
-        global wave_right
-        global gaussian_sigma
-        global gaussian_pos
-        global gaussian_window
-        global samples_num
-
         self.shared_vars.sample_min = int(self.ui.sampling_start_ui.text())
         self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
-        samples_num = self.shared_vars.sample_max - self.shared_vars.sample_min
+        self.shared_vars.samples_num = self.shared_vars.sample_max - \
+            self.shared_vars.sample_min
 
-        wave_left = int(self.ui.wave_left_ui.text())
-        wave_right = int(self.ui.wave_right_ui.text())
-        gaussian_sigma = int(self.ui.gaussian_std_ui.text())
-        gaussian_pos = int(self.ui.gaussian_pos_ui.text())
+        self.shared_vars.wave_left = int(self.ui.wave_left_ui.text())
+        self.shared_vars.wave_right = int(self.ui.wave_right_ui.text())
+        self.shared_vars.gaussian_sigma = int(self.ui.gaussian_std_ui.text())
+        self.shared_vars.gaussian_pos = int(self.ui.gaussian_pos_ui.text())
         self.ui.logbrowser.append(
-            '\nBandwidth SET, LOW Wavelength: ' + str(wave_left))
+            '\nBandwidth SET, LOW Wavelength: ' + str(self.shared_vars.wave_left))
         self.ui.logbrowser.append(
             'Bandwidth SET, HIGH Wavelength: ' +
-            str(wave_right))
+            str(self.shared_vars.wave_right))
         self.ui.logbrowser.append(
             'Gaussian window width (STD): ' +
-            str(gaussian_sigma))
+            str(self.shared_vars.gaussian_sigma))
         self.ui.logbrowser.append(
-            'Gaussian window position: ' + str(gaussian_pos) + '\n')
+            'Gaussian window position: ' + str(self.shared_vars.gaussian_pos) + '\n')
 
-        gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
-                                                        (samples_num - 1) / 2,
-                                                        samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        # gaussian_window = np.interp(
-        # gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1,
+        self.shared_vars.gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(self.shared_vars.samples_num - 1) / 2,
+                                                                         (self.shared_vars.samples_num - 1) / 2,
+                                                                         self.shared_vars.samples_num) - self.shared_vars.gaussian_pos) / (4 * self.shared_vars.gaussian_sigma))**2)
+        # self.shared_vars.gaussian_window = np.interp(
+        # self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (-1,
         # 1))
         self.ui.gaussian.setData(
             decimate(
-                gaussian_window,
-                decimation_factor,
+                self.shared_vars.gaussian_window,
+                self.shared_vars.decimation_factor,
                 axis=0))
 
     def preset2_mode(self):
-        global wave_left
-        global wave_right
-        global gaussian_sigma
-        global gaussian_pos
-        wave_left = 1850
-        wave_right = 2150
-        gaussian_sigma = 200
-        gaussian_pos = 0
-        self.ui.wave_right_ui.setText(str(wave_right))
-        self.ui.wave_left_ui.setText(str(wave_left))
-        self.ui.gaussian_std_ui.setText(str(gaussian_sigma))
+        self.shared_vars.wave_left = 1850
+        self.shared_vars.wave_right = 2150
+        self.shared_vars.gaussian_sigma = 200
+        self.shared_vars.gaussian_pos = 0
+        self.ui.wave_right_ui.setText(str(self.shared_vars.wave_right))
+        self.ui.wave_left_ui.setText(str(self.shared_vars.wave_left))
+        self.ui.gaussian_std_ui.setText(str(self.shared_vars.gaussian_sigma))
         self.ui.aspect_ratio.setText('1')
-        gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
-                                                        (samples_num - 1) / 2,
-                                                        samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        # gaussian_window = np.interp(
-        # gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1,
+        self.shared_vars.gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(self.shared_vars.samples_num - 1) / 2,
+                                                                         (self.shared_vars.samples_num - 1) / 2,
+                                                                         self.shared_vars.samples_num) - self.shared_vars.gaussian_pos) / (4 * self.shared_vars.gaussian_sigma))**2)
+        # self.shared_vars.gaussian_window = np.interp(
+        # self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (-1,
         # 1))
         self.ui.gaussian.setData(
             decimate(
-                gaussian_window,
-                decimation_factor,
+                self.shared_vars.gaussian_window,
+                self.shared_vars.decimation_factor,
                 axis=0))
 
     def preset1_mode(self):
-        global wave_left
-        global wave_right
-        global gaussian_sigma
-        global gaussian_pos
-        wave_left = 3720
-        wave_right = 4200
-        gaussian_sigma = 1000
-        gaussian_pos = 0
-        self.ui.wave_right_ui.setText(str(wave_right))
-        self.ui.wave_left_ui.setText(str(wave_left))
-        self.ui.gaussian_std_ui.setText(str(gaussian_sigma))
-        self.ui.gaussian_pos_ui.setText(str(gaussian_pos))
+        self.shared_vars.wave_left = 3720
+        self.shared_vars.wave_right = 4200
+        self.shared_vars.gaussian_sigma = 1000
+        self.shared_vars.gaussian_pos = 0
+        self.ui.wave_right_ui.setText(str(self.shared_vars.wave_right))
+        self.ui.wave_left_ui.setText(str(self.shared_vars.wave_left))
+        self.ui.gaussian_std_ui.setText(str(self.shared_vars.gaussian_sigma))
+        self.ui.gaussian_pos_ui.setText(str(self.shared_vars.gaussian_pos))
         self.ui.aspect_ratio.setText('0.5')
-        gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(samples_num - 1) / 2,
-                                                        (samples_num - 1) / 2,
-                                                        samples_num) - gaussian_pos) / (4 * gaussian_sigma))**2)
-        # gaussian_window = np.interp(
-        # gaussian_window, (gaussian_window.min(), gaussian_window.max()), (-1,
+        self.shared_vars.gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(self.shared_vars.samples_num - 1) / 2,
+                                                                         (self.shared_vars.samples_num - 1) / 2,
+                                                                         self.shared_vars.samples_num) - self.shared_vars.gaussian_pos) / (4 * self.shared_vars.gaussian_sigma))**2)
+        # self.shared_vars.gaussian_window = np.interp(
+        # self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (-1,
         # 1))
         self.ui.gaussian.setData(
             decimate(
-                gaussian_window,
-                decimation_factor,
+                self.shared_vars.gaussian_window,
+                self.shared_vars.decimation_factor,
                 axis=0))
 
     def stop_spectrometer(self):
         print('Stopped')
-        print(self.shared_vars.flag)
         self.shared_vars.flag = 1
 
     def resarray(self):
@@ -584,11 +497,9 @@ class win(QtWidgets.QMainWindow):
         self.ui.ApplyProcButton.setEnabled(True)
 
     def closeEvent(self, event):
-        global flag
         reply = QMessageBox.question(self, 'Exit', 'Do you want to exit?')
         if reply == QMessageBox.Yes:
             event.accept()
-            flag = 1
             self.shared_vars.flag = 1
             # self.ui.BscanWidget.deleteLater()
             # self.ui.curve.deleteLater()
@@ -615,18 +526,18 @@ class GetReferenceThread(QtCore.QThread):
         self.shared_vars = shared_vars
 
     def run(self):
-        global measurement_flag, reference_spectrum
-        for i in range(0, len(refern)):
-            time.sleep(idle_time)
-            if measurement_flag == 0:
-                measurement_flag = 1
+        for i in range(0, len(self.shared_vars.refer_arr)):
+            time.sleep(self.shared_vars.idle_time)
+            if self.shared_vars.measurement_flag == 0:
+                self.shared_vars.measurement_flag = 1
                 break
-            refern[i, :] = self.shared_vars.buffer_signal
+            self.shared_vars.refer_arr[i, :] = self.shared_vars.buffer_signal
 
-            self.refprogress = (i + 1) / len(refern) * 100
+            self.refprogress = (i + 1) / len(self.shared_vars.refer_arr) * 100
             self.refprog.emit(self.refprogress)
 
-        reference_spectrum = np.mean(refern[:i, :], 0)
+        self.shared_vars.reference_spectrum = np.mean(
+            self.shared_vars.refer_arr[:i, :], 0)
         self.refdone.emit(self.refprogress)
 
 
@@ -661,7 +572,6 @@ class YPositionToThread(QtCore.QThread):
         QtCore.QThread.__init__(self, parent)
 
     def run(self):
-        global ystart_coordinate
         self.msg = 'Moved to start Y position'
         self.status.emit(self.msg)
 
@@ -673,8 +583,8 @@ class XPositionToThread(QtCore.QThread):
         QtCore.QThread.__init__(self, parent)
 
     def run(self):
-        global xstart_coordinate
-        self.msg = 'Moved to start X position: ' + str(xstart_coordinate)
+        self.msg = 'Moved to start X position: ' + \
+            str(self.shared_vars.xstart_coordinate)
         self.status.emit(self.msg)
 
 
@@ -689,142 +599,125 @@ class VolumeScanningThread(QtCore.QThread):
 
     def run(self):
         start_time = time.time()
-        global b_scan
-        global scanf
-        global scans
-        global flag
-        global measurement_flag
-        global ystep
-        global ystart_coordinate
-        global ystop_coordinate
-        global avg_num
-        global ref_avg_num
-        global x_step
-        global xstart_coordinate
-        global xstop_coordinate
-        global idle_time
-        global data
-        global refern
-        global scanrange
-        global outputfft
-        global interm_output
-        global gaussian_sigma
-        global gaussian_pos
-        global wave_left
-        global wave_right
-        global b_scan
-        global flag
-        global measurement_flag
-
-        yscanrange = np.flip(
+        self.y_scan_range = np.flip(
             np.arange(
-                ystop_coordinate,
-                ystart_coordinate +
-                ystep,
-                ystep),
+                self.shared_vars.ystop_coordinate,
+                self.shared_vars.ystart_coordinate +
+                self.shared_vars.ystep,
+                self.shared_vars.ystep),
             0)
 
-        ascanav = np.zeros([samples_num, avg_num, len(scanrange)])
+        self.ascan_avg_arr = np.zeros([self.shared_vars.samples_num,
+                            self.shared_vars.avg_num,
+                            len(self.shared_vars.scan_range)])
 
-        vscan = np.zeros([len(yscanrange), 512, len(scanrange)])
+        self.volume_scan = np.zeros(
+            [len(self.y_scan_range), self.shared_vars.z_sample_num, len(self.shared_vars.scan_range)])
 
-        totalmeasurements = len(yscanrange) * len(scanrange)
+        totalmeasurements = len(self.y_scan_range) * len(self.shared_vars.scan_range)
 
         # START MEASUREMENT
         start_time = time.time()
         len_counter = 1
         z_counter = 1
 
-        for zpos in range(0, len(yscanrange)):
+        for self.y_pos in range(0, len(self.y_scan_range)):
 
-            print(yscanrange[zpos])
-            print(zpos)
+            print(self.y_scan_range[self.y_pos])
+            print(self.y_pos)
 
-            # motor.move_to(yscanrange[zpos], True)
+            # motor.move_to(self.y_scan_range[self.y_pos], True)
 
-            if measurement_flag == 0:
-                measurement_flag = 1
+            if self.shared_vars.measurement_flag == 0:
+                self.shared_vars.measurement_flag = 1
                 break
 
-            for itn in range(0, len(scanrange)):
-                print('Position:', round(scanrange[itn], 3), 'mm')
-                if measurement_flag == 0:
+            for itn in range(0, len(self.shared_vars.scan_range)):
+                # print(
+                #     'Position:',
+                #     round(
+                #         self.shared_vars.scan_range[itn],
+                #         3),
+                #     'mm')
+                if self.shared_vars.measurement_flag == 0:
                     break
 
-                for i in range(0, avg_num):
-                    print(
-                        'Y-STEPNUM: ',
-                        zpos,
-                        ' Position:',
-                        round(
-                            scanrange[itn],
-                            3),
-                        'mm ',
-                        "Spectrum number: ",
-                        i)
-                    data[:, i] = np.flip(self.shared_vars.buffer_signal, 0)
-                    # FOR FUTHER FFT AVERAGING
-                    ascanav[:, i, itn] = np.flip(
+                for i in range(0, self.shared_vars.avg_num):
+                    # print(
+                    #     'Y-STEPNUM: ',
+                    #     self.y_pos,
+                    #     ' Position:',
+                    #     round(
+                    #         self.shared_vars.scan_range[itn],
+                    #         3),
+                    #     'mm ',
+                    #     "Spectrum number: ",
+                    #     i)
+                    self.shared_vars.data[:, i] = np.flip(
                         self.shared_vars.buffer_signal, 0)
-                    time.sleep(idle_time)
-                    if flag != 0:
+                    # FOR FUTHER FFT AVERAGING
+                    self.ascan_avg_arr[:, i, itn] = np.flip(
+                        self.shared_vars.buffer_signal, 0)
+                    time.sleep(self.shared_vars.idle_time)
+                    if self.shared_vars.flag != 0:
                         break
-                interm_output[:, itn] = np.mean(data, 1)
-                average_f_space = np.flip(np.rot90(data, 1), 1)
-                outputfft[:,
-                          itn] = np.mean(scanProcess(np.flip(remap_to_k(average_f_space,
-                                                                        reference_spectrum,
-                                                                        wave_left,
-                                                                        wave_right,
-                                                                        cal_vector,
-                                                                        boundaries, samples_num),
-                                                             0),
-                                                     gaussian_window),
-                                         0)
+                self.shared_vars.interm_output[:, itn] = np.mean(
+                    self.shared_vars.data, 1)
+                average_f_space = np.flip(
+                    np.rot90(self.shared_vars.data, 1), 1)
+                self.shared_vars.output_fft[:,
+                                            itn] = np.mean(scanProcess(np.flip(remap_to_k(average_f_space,
+                                                                                          self.shared_vars.reference_spectrum,
+                                                                                          self.shared_vars.wave_left,
+                                                                                          self.shared_vars.wave_right,
+                                                                                          self.shared_vars.cal_vector,
+                                                                                          self.shared_vars.boundaries,
+                                                                                          self.shared_vars.samples_num),
+                                                                               0),
+                                                                       self.shared_vars.gaussian_window),
+                                                           0)
 
                 len_counter = len_counter + 1
 
                 self.progress = 100 * \
                     (len_counter + z_counter) / totalmeasurements
                 self.measprog.emit(self.progress)
-                if flag != 0:
+                if self.shared_vars.flag != 0:
                     break
-            topost = np.flip(np.rot90(interm_output, 1), 1)
-            if flag != 0:
+            topost = np.flip(np.rot90(self.shared_vars.interm_output, 1), 1)
+            if self.shared_vars.flag != 0:
                 break
 
             # PROCESS
-            b_scan = scanProcess(
+            self.shared_vars.b_scan = scanProcess(
                 np.flip(
                     remap_to_k(
                         topost,
-                        reference_spectrum,
-                        wave_left,
-                        wave_right,
-                        cal_vector,
-                        boundaries, samples_num),
+                        self.shared_vars.reference_spectrum,
+                        self.shared_vars.wave_left,
+                        self.shared_vars.wave_right,
+                        self.shared_vars.cal_vector,
+                        self.shared_vars.boundaries,
+                        self.shared_vars.samples_num),
                     0),
-                gaussian_window)
-            scanf = np.rot90(b_scan)
+                self.shared_vars.gaussian_window)
+            self.scanf = np.rot90(self.shared_vars.b_scan)
 
-            vscan[zpos, :, :] = scanf[int(
-                samples_num / 2):int(samples_num / 2) + 512, :]
-            scans = vscan
-            b_scan = np.flip(np.moveaxis(
-                np.flip(vscan[:zpos + 1, :, :], 0), -1, 0), 1)
+            self.volume_scan[self.y_pos, :, :] = self.scanf[int(
+                self.shared_vars.samples_num / 2):int(self.shared_vars.samples_num / 2) + self.shared_vars.z_sample_num, :]
+            self.shared_vars.scans = self.volume_scan
+            self.shared_vars.b_scan = np.flip(np.moveaxis(
+                np.flip(self.volume_scan[:self.y_pos + 1, :, :], 0), -1, 0), 1)
             z_counter = z_counter + 1
-            if np.shape(b_scan)[1] > 0:
+            if np.shape(self.shared_vars.b_scan)[1] > 0:
                 self.mdat.emit(self.progress)
-                print(np.shape(b_scan))
+                print(np.shape(self.shared_vars.b_scan))
 
-        # motor.move_to(yscanrange[0])
+        # motor.move_to(self.y_scan_range[0])
 
-        global vscancheck
-        vscancheck = vscan
-        # b_scan=vscan
-        b_scan = np.moveaxis(np.flip(vscan, 0), -1, 0)
+        self.shared_vars.b_scan = np.moveaxis(np.flip(self.volume_scan, 0), -1, 0)
         print('3D measurement completed')
-        self.ms_msg = '3D b_scan DONE in ' + \
+        self.ms_msg = 'Volumetric scan is DONE in ' + \
             "--- %s seconds ---" % (time.time() - start_time)
         self.meas_status.emit(self.ms_msg)
         self.progress = 100
@@ -843,104 +736,95 @@ class BScanMeasureThread(QtCore.QThread):
     def run(self):
         # err = 0
         start_time = time.time()
-        global outputfft
-        global b_scan
-        global scanf
-        global scans
-        global flag
-        global measurement_flag, inloop_flag
-        global gaussian_window
-        global raw_data
-
-        if len(data) == len(reference_spectrum):
+        if len(self.shared_vars.data) == len(
+                self.shared_vars.reference_spectrum):
             self.ms_msg = 'Measurements started...\n' + 'b_scan length: ' + \
-                str(xstart_coordinate - xstop_coordinate) + 'mm\n' + 'Averaging: ' + str(avg_num)
+                str(self.shared_vars.xstart_coordinate - self.shared_vars.xstop_coordinate) + 'mm\n' + 'Averaging: ' + str(self.shared_vars.avg_num)
             self.meas_status.emit(self.ms_msg)
-            for itn in range(0, len(scanrange)):
+            for itn in range(0, len(self.shared_vars.scan_range)):
                 # logging.info(
-                #     'Position: %s mm; Errors: %s; Av.avg_num: %s; Gaussian window: %s; WinWidth: %s',
+                #     'Position: %s mm; Errors: %s; Av.self.shared_vars.avg_num: %s; Gaussian window: %s; WinWidth: %s',
                 #     round(
-                #         scanrange[itn],
+                #         self.shared_vars.scan_range[itn],
                 #         2),
                 #     err,
-                #     avg_num,
-                #     gaussian_sigma,
-                #     gaussian_pos)
-                self.progress = 100 * (itn + 1) / len(scanrange)
+                #     self.shared_vars.avg_num,
+                #     self.shared_vars.gaussian_sigma,
+                #     self.shared_vars.gaussian_pos)
+                self.progress = 100 * (itn + 1) / \
+                    len(self.shared_vars.scan_range)
                 self.measprog.emit(self.progress)
 
-                if measurement_flag == 0:
-                    measurement_flag = 1
+                if self.shared_vars.measurement_flag == 0:
+                    self.shared_vars.measurement_flag = 1
                     break
-                for i in range(0, avg_num):  # Averaging
-                    if flag != 0:
+                for i in range(0, self.shared_vars.avg_num):  # Averaging
+                    if self.shared_vars.flag != 0:
                         break
-                    if inloop_flag == 0:
-                        inloop_flag = 1
+                    if self.shared_vars.inloop_flag == 0:
+                        self.shared_vars.inloop_flag = 1
                         break
-                    time.sleep(idle_time)
-                    data[:, i] = self.shared_vars.buffer_signal
-                interm_output[:, itn] = np.mean(data, 1)
+                    time.sleep(self.shared_vars.idle_time)
 
-                average_f_space = np.rot90(data, 3)
-                outputfft[:,
-                          itn] = np.mean(scanProcess(np.flip(remap_to_k(average_f_space,
-                                                                        reference_spectrum,
-                                                                        wave_left,
-                                                                        wave_right,
-                                                                        cal_vector,
-                                                                        boundaries,
-                                                                        samples_num),
-                                                             0),
-                                                     gaussian_window),
-                                         0)
-                if flag != 0:
+                    self.shared_vars.data[:,
+                                          i] = self.shared_vars.buffer_signal
+                self.shared_vars.interm_output[:, itn] = np.mean(
+                    self.shared_vars.data, 1)
+
+                self.average_f_space = np.rot90(self.shared_vars.data, 3)
+                self.shared_vars.output_fft[:,
+                                            itn] = np.mean(scanProcess(np.flip(remap_to_k(self.average_f_space,
+                                                                                          self.shared_vars.reference_spectrum,
+                                                                                          self.shared_vars.wave_left,
+                                                                                          self.shared_vars.wave_right,
+                                                                                          self.shared_vars.cal_vector,
+                                                                                          self.shared_vars.boundaries,
+                                                                                          self.shared_vars.samples_num),
+                                                                               0),
+                                                                       self.shared_vars.gaussian_window),
+                                                           0)
+                if self.shared_vars.flag != 0:
                     break
-            topost = np.rot90(interm_output, 3)
-            raw_data = np.copy(topost)
+            topost = np.rot90(self.shared_vars.interm_output, 3)
+            self.shared_vars.raw_data = np.copy(topost)
 
             # PROCESS
-            b_scan = scanProcess(
+            self.shared_vars.b_scan = scanProcess(
                 np.flip(
                     remap_to_k(
                         topost,
-                        reference_spectrum,
-                        wave_left,
-                        wave_right,
-                        cal_vector,
-                        boundaries,
-                        samples_num),
+                        self.shared_vars.reference_spectrum,
+                        self.shared_vars.wave_left,
+                        self.shared_vars.wave_right,
+                        self.shared_vars.cal_vector,
+                        self.shared_vars.boundaries,
+                        self.shared_vars.samples_num),
                     0),
-                gaussian_window)
-            scanf = np.rot90(b_scan)
+                self.shared_vars.gaussian_window)
+            self.scanf = np.rot90(self.shared_vars.b_scan, 3)
 
             # AVERAGE WITH MEAN FOURIER SPACE
-            avg_of_spaces = np.mean([scanf[int(samples_num /
-                                               2):int(samples_num /
-                                                      2 +
-                                                      512), :], outputfft[int(samples_num /
-                                                                              2 +
-                                                                              1):int(samples_num /
-                                                                                     2 +
-                                                                                     512 +
-                                                                                     1), :]], 0)
-            avg_of_spaces = avg_of_spaces
-
-            purescn = scanf
-            pureftscn = outputfft
-
-            scans = np.array([avg_of_spaces, purescn[int(samples_num /
-                                                         2):int(samples_num /
+            self.avg_of_spaces = np.mean([self.scanf[int(self.shared_vars.samples_num /
+                                                         2):int(self.shared_vars.samples_num /
                                                                 2 +
-                                                                512), :], pureftscn[int(samples_num /
-                                                                                        2 +
-                                                                                        1):int(samples_num /
-                                                                                               2 +
-                                                                                               512 +
-                                                                                               1), :]])
+                                                                self.shared_vars.z_sample_num), :], self.shared_vars.output_fft[int(self.shared_vars.samples_num /
+                                                                                                          2 +
+                                                                                                          0):int(self.shared_vars.samples_num /
+                                                                                                      2 +
+                                                                                                      self.shared_vars.z_sample_num +
+                                                                                                      0), :]], 0)
+            self.shared_vars.scans = np.array([self.avg_of_spaces, self.scanf[int(self.shared_vars.samples_num /
+                                                                                  2):int(self.shared_vars.samples_num /
+                                                                                         2 +
+                                                                                         self.shared_vars.z_sample_num), :], self.shared_vars.output_fft[int(self.shared_vars.samples_num /
+                                                                                                                                   2 +
+                                                                                                                                   0):int(self.shared_vars.samples_num /
+                                                                                                                                          2 +
+                                                                                                                                          self.shared_vars.z_sample_num +
+                                                                                                                                          0), :]])
 
-            # alternative: b_scan = np.moveaxis(np.flip(scans, 0), -1, 0)
-            b_scan = scans.transpose(2, 0, 1)
+            # alternative: b_scan = np.moveaxis(np.flip(self.shared_vars.scans, 0), -1, 0)
+            self.shared_vars.b_scan = self.shared_vars.scans.transpose(2, 0, 1)
             print("--- %s seconds ---" % (time.time() - start_time))
             self.ms_msg = 'DONE in ' + \
                 "--- %s seconds ---" % (time.time() - start_time)
@@ -954,37 +838,35 @@ class BScanMeasureThread(QtCore.QThread):
 class PostProcessingThread(QtCore.QThread):
     request_parameters = QtCore.Signal(object)
 
-    def __init__(self, parent=win):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         self.request_parameters.emit(self)
-        print(wave_left)
-        print(wave_right)
-        print(gaussian_sigma)
-        print(gaussian_pos)
+        print(self.shared_vars.wave_left)
+        print(self.shared_vars.wave_right)
+        print(self.shared_vars.gaussian_sigma)
+        print(self.shared_vars.gaussian_pos)
         # PROCESS
-#        local_outputfft=raw_fftout
-        global raw_data
-        local_topost = np.copy(raw_data)
+        local_topost = np.copy(self.shared_vars.raw_data)
         local_scan = scanProcess(
             np.flip(
                 remap_to_k(
                     local_topost,
-                    reference_spectrum,
-                    wave_left,
-                    wave_right,
-                    cal_vector,
-                    boundaries,
-                    samples_num),
+                    self.shared_vars.reference_spectrum,
+                    self.shared_vars.wave_left,
+                    self.shared_vars.wave_right,
+                    self.shared_vars.cal_vector,
+                    self.shared_vars.boundaries,
+                    self.shared_vars.samples_num),
                 0),
-            gaussian_window)
+            self.shared_vars.gaussian_window)
         local_scanf = np.rot90(local_scan)
         # AVERAGE WITH MEAN FOURIER SPACE
         local_purescn = local_scanf[int(
-            samples_num / 2):int(samples_num / 2 + 512), :]
-        global b_scan
-        b_scan = np.flip(local_purescn, 1)
+            self.shared_vars.samples_num / 2):int(self.shared_vars.samples_num / 2 + self.shared_vars.z_sample_num), :]
+        self.shared_vars.b_scan = np.flip(local_purescn, 1)
         del local_topost
 
 
@@ -1019,62 +901,25 @@ class InitializationThread(QtCore.QThread):
         self.shared_vars = shared_vars
 
     def run(self):
-        global shutt
-        global samples_num
-        global scanrange
-        global refern
-        global data
-        global interm_output
-        global outputfft
-        global delay
-        global cal_vector
-        global boundaries
+        global shutt  # an example if some shutter should be loaded
 
-        try:
-            cal_vector = np.load('calibration_vector.npy')
-            boundaries = np.load('boundaries.npy')
-            print('Calibration vector loaded')
+        if self.shared_vars.cal_vector is not None and self.shared_vars.boundaries is not None:
             self.init_msg = 'Calibration vector loaded'
             self.init_status.emit(self.init_msg)
-        except BaseException:
-            cal_vector = None
-            boundaries = None
-            print('Calibration vector not found')
+        else:
             self.init_msg = 'Calibration vector not found'
             self.init_status.emit(self.init_msg)
-            pass
 
         # #DAQ CONFIGURATION
         # define here your signal source
 
         # Number of samples
-        samples_num = self.shared_vars.sample_max - self.shared_vars.sample_min
-        self.init_msg = '\nNumber of samples: ' + str(samples_num)
+        self.init_msg = '\nNumber of samples: ' + \
+            str(self.shared_vars.samples_num)
         self.init_status.emit(self.init_msg)
         b, a = scisig.butter(4, 0.0005, btype='highpass')
 
-        # GLOBAL EMPTHY VARIABLES
-        scanrange = np.flip(
-            np.arange(
-                xstop_coordinate,
-                xstart_coordinate +
-                x_step,
-                x_step),
-            0)
-        refern = np.zeros([ref_avg_num, samples_num])
-        position = 0
-        # spectarr = (c_float*510)()
-        data = np.zeros([samples_num, avg_num])
-        interm_output = np.zeros([samples_num, len(scanrange)])
-        outputfft = np.zeros([samples_num, len(scanrange)])
-
-        # STAGE CONFIGURATION
-        CONTROLLERNAME = 'C-863.11'
-        STAGES = ['M-126.PD1']  # connect stages to axes
-        REFMODES = ['FNL', 'FRF']
-        velocity = 15
-        scanv = 10
-
+        # Example of initializing something
         if 'shutt' in locals():
             if shutt.isOpen():
                 shutt.close()
@@ -1098,7 +943,7 @@ class InitializationThread(QtCore.QThread):
                     str(shutt.isOpen())
 
             except BaseException:
-                print('\nShutter is is not found')
+                print('\nShutter is not found')
                 self.init_msg = 'Shutter system is not found'
 
             self.init_status.emit(self.init_msg)
@@ -1113,29 +958,33 @@ class InitializationThread(QtCore.QThread):
 class SaveDataThread(QtCore.QThread):
     status = QtCore.Signal(object)
 
-    def __init__(self, parent=win):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
-        global scans
-        global logcoeff
-        global filename
-        if 'scans' in globals() and np.mean(scans) != 0:
+        if self.shared_vars.scans is not None and np.mean(
+                self.shared_vars.scans) != 0:
             try:
                 np.save(
-                    directory +
+                    self.shared_vars.directory +
                     '/' +
-                    filename +
-                    datetime.now().strftime('%Y-%m-%d_%H-%M') +
+                    self.shared_vars.filename +
+                    datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
                     '.npy',
-                    scans)
-                print('Saved as ' + directory + '/' + filename +
-                      datetime.now().strftime('%Y-%m-%d_%H-%M') + '.npy')
-                # self.ui.logbrowser.append('Saved as '+directory+'/'+filename+datetime.now().strftime('%Y-%m-%d_%H-%M')+'.npy \n')
-                self.msg = 'Saved in ' + directory
+                    self.shared_vars.scans)
+                print(
+                    'Saved as ' +
+                    self.shared_vars.directory +
+                    '/' +
+                    self.shared_vars.filename +
+                    datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
+                    '.npy')
+                self.msg = 'Saved in ' + self.shared_vars.directory
                 self.status.emit(self.msg)
-                if np.shape(scans)[0] > 3:
-                    scans_to_save = 20 * np.log10(np.copy(scans) + logcoeff)
+                if np.shape(self.shared_vars.scans)[0] > 3:
+                    scans_to_save = 20 * \
+                        np.log10(np.copy(self.shared_vars.scans) + self.shared_vars.log_coeff)
                     scans_to_save = scans_to_save - np.min(scans_to_save)
                     scans_to_save = scans_to_save / \
                         np.max(scans_to_save) * 65536
@@ -1143,36 +992,37 @@ class SaveDataThread(QtCore.QThread):
                     scans_to_save = scans_to_save.astype(np.uint16)
                     try:
                         tif.imwrite(
-                            directory +
+                            self.shared_vars.directory +
                             '/' +
-                            filename +
-                            datetime.now().strftime('%Y-%m-%d_%H-%M') +
+                            self.shared_vars.filename +
+                            datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
                             '.tif',
                             scans_to_save,
                             photometric='minisblack')
-                        self.msg = 'Tif volume saved in ' + directory
+                        self.msg = 'Tif volume saved in ' + self.shared_vars.directory
                         self.status.emit(self.msg)
                     except BaseException:
                         self.msg = 'Tif volume saved in ' + './data_output/'
                         self.status.emit(self.msg)
                         tif.imwrite(
                             './data_output/' +
-                            filename +
-                            datetime.now().strftime('%Y-%m-%d_%H-%M') +
+                            self.shared_vars.filename +
+                            datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
                             '.tif',
                             scans_to_save,
                             photometric='minisblack')
             except BaseException:
                 np.save(
                     './data_output/' +
-                    filename +
-                    datetime.now().strftime('%Y-%m-%d_%H-%M') +
+                    self.shared_vars.filename +
+                    datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
                     '.npy',
-                    scans)
+                    self.shared_vars.scans)
                 self.msg = 'Saved in ' + './data_output/'
                 self.status.emit(self.msg)
-                if np.shape(scans)[0] > 3:
-                    scans_to_save = 20 * np.log10(np.copy(scans) + logcoeff)
+                if np.shape(self.shared_vars.scans)[0] > 3:
+                    scans_to_save = 20 * \
+                        np.log10(np.copy(self.shared_vars.scans) + self.shared_vars.log_coeff)
                     scans_to_save = scans_to_save - np.min(scans_to_save)
                     scans_to_save = scans_to_save / \
                         np.max(scans_to_save) * 65536
@@ -1182,15 +1032,15 @@ class SaveDataThread(QtCore.QThread):
                     self.status.emit(self.msg)
                     tif.imwrite(
                         './data_output/' +
-                        filename +
-                        datetime.now().strftime('%Y-%m-%d_%H-%M') +
+                        self.shared_vars.filename +
+                        datetime.now().strftime('%Y-%m-%d_%H-%M_%S') +
                         '.tif',
                         scans_to_save,
                         photometric='minisblack')
-                # self.ui.logbrowser.append('Saved as: '+('./data_output/'+filename+datetime.now().strftime('%Y-%m-%d_%H-%M')+'.npy \n'))
         else:
             print('Empthy data')
-            # self.ui.logbrowser.append('b_scan cannot be saved, EmptyData')
+            self.msg = 'Empthy data, cannot save'
+            self.status.emit(self.msg)
 
 
 class SaveParamsThread(QtCore.QThread):
@@ -1200,31 +1050,7 @@ class SaveParamsThread(QtCore.QThread):
         QtCore.QThread.__init__(self, parent)
 
     def run(self):
-
-        global wave_left
-        global wave_right
-        global gaussian_sigma
-        global reference_spectrum
-        global avg_num
-        global ref_avg_num
-        global x_step
-        global xstart_coordinate
-        global xstop_coordinate
-        global idle_time
-        global data
-        global samples_num
-        global b_scan
-        global gaussian_pos
-        global interm_output
-        global gaussian_window
-        global raw_data
-        global flag
-        global directory
-        global measurement_flag
-        global ystep
-        global ystart_coordinate
-        global ystop_coordinate
-        np.save('./reference/ref.npy', reference_spectrum)
+        np.save('./settings/ref.npy', self.shared_vars.reference_spectrum)
 
 
 if __name__ == "__main__":
