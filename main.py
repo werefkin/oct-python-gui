@@ -608,13 +608,14 @@ class VolumeScanningThread(QtCore.QThread):
             0)
 
         self.ascan_avg_arr = np.zeros([self.shared_vars.samples_num,
-                            self.shared_vars.avg_num,
-                            len(self.shared_vars.scan_range)])
+                                       self.shared_vars.avg_num,
+                                       len(self.shared_vars.scan_range)])
 
         self.volume_scan = np.zeros(
             [len(self.y_scan_range), self.shared_vars.z_sample_num, len(self.shared_vars.scan_range)])
 
-        totalmeasurements = len(self.y_scan_range) * len(self.shared_vars.scan_range)
+        totalmeasurements = len(self.y_scan_range) * \
+            len(self.shared_vars.scan_range)
 
         # START MEASUREMENT
         start_time = time.time()
@@ -703,8 +704,8 @@ class VolumeScanningThread(QtCore.QThread):
                 self.shared_vars.gaussian_window)
             self.scanf = np.rot90(self.shared_vars.b_scan)
 
-            self.volume_scan[self.y_pos, :, :] = self.scanf[int(
-                self.shared_vars.samples_num / 2):int(self.shared_vars.samples_num / 2) + self.shared_vars.z_sample_num, :]
+            self.volume_scan[self.y_pos, :, :] = self.scanf[int(self.shared_vars.samples_num / 2):int(
+                self.shared_vars.samples_num / 2) + self.shared_vars.z_sample_num, :]
             self.shared_vars.scans = self.volume_scan
             self.shared_vars.b_scan = np.flip(np.moveaxis(
                 np.flip(self.volume_scan[:self.y_pos + 1, :, :], 0), -1, 0), 1)
@@ -715,7 +716,8 @@ class VolumeScanningThread(QtCore.QThread):
 
         # motor.move_to(self.y_scan_range[0])
 
-        self.shared_vars.b_scan = np.moveaxis(np.flip(self.volume_scan, 0), -1, 0)
+        self.shared_vars.b_scan = np.moveaxis(
+            np.flip(self.volume_scan, 0), -1, 0)
         print('3D measurement completed')
         self.ms_msg = 'Volumetric scan is DONE in ' + \
             "--- %s seconds ---" % (time.time() - start_time)
@@ -808,20 +810,20 @@ class BScanMeasureThread(QtCore.QThread):
                                                          2):int(self.shared_vars.samples_num /
                                                                 2 +
                                                                 self.shared_vars.z_sample_num), :], self.shared_vars.output_fft[int(self.shared_vars.samples_num /
-                                                                                                          2 +
-                                                                                                          0):int(self.shared_vars.samples_num /
-                                                                                                      2 +
-                                                                                                      self.shared_vars.z_sample_num +
-                                                                                                      0), :]], 0)
+                                                                                                                                    2 +
+                                                                                                                                    0):int(self.shared_vars.samples_num /
+                                                                                                                                           2 +
+                                                                                                                                           self.shared_vars.z_sample_num +
+                                                                                                                                           0), :]], 0)
             self.shared_vars.scans = np.array([self.avg_of_spaces, self.scanf[int(self.shared_vars.samples_num /
                                                                                   2):int(self.shared_vars.samples_num /
                                                                                          2 +
                                                                                          self.shared_vars.z_sample_num), :], self.shared_vars.output_fft[int(self.shared_vars.samples_num /
-                                                                                                                                   2 +
-                                                                                                                                   0):int(self.shared_vars.samples_num /
-                                                                                                                                          2 +
-                                                                                                                                          self.shared_vars.z_sample_num +
-                                                                                                                                          0), :]])
+                                                                                                                                                             2 +
+                                                                                                                                                             0):int(self.shared_vars.samples_num /
+                                                                                                                                                                    2 +
+                                                                                                                                                                    self.shared_vars.z_sample_num +
+                                                                                                                                                                    0), :]])
 
             # alternative: b_scan = np.moveaxis(np.flip(self.shared_vars.scans, 0), -1, 0)
             self.shared_vars.b_scan = self.shared_vars.scans.transpose(2, 0, 1)
@@ -864,8 +866,8 @@ class PostProcessingThread(QtCore.QThread):
             self.shared_vars.gaussian_window)
         local_scanf = np.rot90(local_scan)
         # AVERAGE WITH MEAN FOURIER SPACE
-        local_purescn = local_scanf[int(
-            self.shared_vars.samples_num / 2):int(self.shared_vars.samples_num / 2 + self.shared_vars.z_sample_num), :]
+        local_purescn = local_scanf[int(self.shared_vars.samples_num / 2):int(
+            self.shared_vars.samples_num / 2 + self.shared_vars.z_sample_num), :]
         self.shared_vars.b_scan = np.flip(local_purescn, 1)
         del local_topost
 
