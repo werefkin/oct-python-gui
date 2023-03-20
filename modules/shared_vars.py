@@ -1,8 +1,10 @@
 import numpy as np
+import pickle
 
 
 class SharedVariables:
     def __init__(self):
+        # Load variables from a file
         self.flag = 0  # global app flag to stop all the running threads if closeEvent happens
         self.measurement_flag = 1  # flag to abort measurement
         self.inloop_flag = 1  # flag to abort measurement inside a long loop
@@ -39,7 +41,7 @@ class SharedVariables:
         self.refer_arr = np.zeros([self.ref_avg_num, self.samples_num])  # defaut referencing array
 
         self.data = np.zeros([self.sample_min, self.sample_max])  # default data container
-        self.raw_data = np.zeros([self.sample_min, self.sample_max])  # default raw_data container
+        self.raw_data = None  # default raw_data container
 
         self.xstop_coordinate = 0  # x scanning parameter
         self.xstart_coordinate = 4  # x scanning parameter
@@ -74,3 +76,60 @@ class SharedVariables:
             self.cal_vector = None
             self.boundaries = None
             pass
+
+    def save_parameters(self):
+        # Create a dictionary of the variables you want to save
+        self.PARAMs = {
+            'idle_time': self.idle_time,
+            'decimation_factor': self.decimation_factor,
+            'sample_min': self.sample_min,
+            'sample_max': self.sample_max,
+            'sig_delay': self.sig_delay,
+            'directory': self.directory,
+            'filename': self.filename,
+            'log_coeff': self.log_coeff,
+            'param1': self.param1,
+            'z_sample_num': self.z_sample_num,
+            'avg_num': self.avg_num,
+            'wave_left': self.wave_left,
+            'wave_right': self.wave_right,
+            'ref_avg_num': self.ref_avg_num,
+            'xstop_coordinate': self.xstop_coordinate,
+            'xstart_coordinate': self.xstart_coordinate,
+            'x_step': self.x_step,
+            'ystart_coordinate': self.ystart_coordinate,
+            'ystop_coordinate': self.ystop_coordinate,
+            'ystep': self.ystep,
+            'gaussian_pos': self.gaussian_pos,
+            'gaussian_sigma': self.gaussian_sigma}
+        with open('./settings/config.cfg', 'wb') as f:
+            pickle.dump(self.PARAMs, f)
+
+    def load_parameters(self):
+        try:
+            with open('./settings/config.cfg', 'rb') as f:
+                self.PARAMs = pickle.load(f)
+                self.idle_time = self.PARAMs['idle_time']
+                self.decimation_factor = self.PARAMs['decimation_factor']
+                self.sample_min = self.PARAMs['sample_min']
+                self.sample_max = self.PARAMs['sample_max']
+                self.sig_delay = self.PARAMs['sig_delay']
+                self.directory = self.PARAMs['directory']
+                self.filename = self.PARAMs['filename']
+                self.log_coeff = self.PARAMs['log_coeff']
+                self.param1 = self.PARAMs['param1']
+                self.z_sample_num = self.PARAMs['z_sample_num']
+                self.avg_num = self.PARAMs['avg_num']
+                self.wave_left = self.PARAMs['wave_left']
+                self.wave_right = self.PARAMs['wave_right']
+                self.ref_avg_num = self.PARAMs['ref_avg_num']
+                self.xstop_coordinate = self.PARAMs['xstop_coordinate']
+                self.xstart_coordinate = self.PARAMs['xstart_coordinate']
+                self.x_step = self.PARAMs['x_step']
+                self.ystart_coordinate = self.PARAMs['ystart_coordinate']
+                self.ystop_coordinate = self.PARAMs['ystop_coordinate']
+                self.ystep = self.PARAMs['ystep']
+                self.gaussian_pos = self.PARAMs['gaussian_pos']
+                self.gaussian_std_ui = self.PARAMs['gaussian_sigma']
+        except FileNotFoundError:
+            print("Config file not found. Using default parameters.")

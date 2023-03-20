@@ -48,9 +48,7 @@ class win(QtWidgets.QMainWindow):
         self.save_thread = SaveDataThread(self.shared_vars)
         self.bscan_measurement_thread = BScanMeasureThread(self.shared_vars)
         self.cscan_measurement_thread = VolumeScanningThread(self.shared_vars)
-
-        self.save_params_thread = SaveParamsThread(self)
-
+        self.save_params_thread = SaveParamsThread(self.shared_vars)
         self.referencing_thread = GetReferenceThread(self.shared_vars)
         self.sys_init_thread = InitializationThread(self.shared_vars)
         self.ystage_init_thread = YstageInitThread(self)
@@ -59,8 +57,6 @@ class win(QtWidgets.QMainWindow):
         self.y_stage_down = YMoveDownByThread(self)
         self.y_axis_move_to = YPositionToThread(self)
         self.x_axis_move_to = XPositionToThread(self)
-
-        # self.buffer_thread .start()
 
 #        BUTTONS SIGNALS
         self.ui.InitButton.clicked.connect(self.set_init_parameters)
@@ -111,8 +107,9 @@ class win(QtWidgets.QMainWindow):
         self.ui.actionAbout.triggered.connect(self.openWindow)
         self.ui.ApplyProcButton.clicked.connect(
             self.set_postprocessparameters)
-        self.ui.ApplyProcButton.clicked.connect(self.post_process_thread.start)
 
+        self.ui.ApplyProcButton.clicked.connect(self.post_process_thread.start)
+        self.ui.actionSave.triggered.connect(self.set_parameters_to_save)
         self.ui.actionSave.triggered.connect(self.save_params_thread.start)
 
 
@@ -127,6 +124,7 @@ class win(QtWidgets.QMainWindow):
             self.set_postprocessparameters)
 
         self.sys_init_thread.initdone.connect(self.activatemeas)
+        self.sys_init_thread.initdone.connect(self.set_saved_parameters)
         self.ystage_init_thread.initdone.connect(self.activate3Dmeas)
 
         self.sys_init_thread.initdone.connect(
@@ -210,9 +208,6 @@ class win(QtWidgets.QMainWindow):
         self.ui.Preset2Radio.toggled.connect(self.preset2_mode)
         self.ui.Preset1Radio.toggled.connect(self.preset1_mode)
 
-        self.variable = 10
-        self.shared_vars.param1 = self.ui.param1.text()
-
     def stop_measurements(self):
         self.shared_vars.measurement_flag = 0
         self.shared_vars.inloop_flag = 0
@@ -259,6 +254,28 @@ class win(QtWidgets.QMainWindow):
         self.ui.SaveButton.setEnabled(True)
         self.ui.ReferenceButton.setEnabled(True)
         self.ui.Button_XMoveTo.setEnabled(True)
+
+    def set_saved_parameters(self):
+        self.ui.a_idle_time.setText(str(self.shared_vars.idle_time))
+        self.ui.sampling_start_ui.setText(str(self.shared_vars.sample_min))
+        self.ui.sampling_stop_ui.setText(str(self.shared_vars.sample_max))
+        self.ui.trig_delay.setText(str(self.shared_vars.sig_delay))
+        self.ui.FolderLine.setText(str(self.shared_vars.directory))
+        self.ui.filenameline.setText(str(self.shared_vars.filename))
+        self.ui.log10_coef.setText(str(self.shared_vars.log_coeff))
+        self.ui.param1.setText(str(self.shared_vars.param1))
+        self.ui.avg_num_ui.setText(str(self.shared_vars.avg_num))
+        self.ui.wave_right_ui.setText(str(self.shared_vars.wave_right))
+        self.ui.wave_left_ui.setText(str(self.shared_vars.wave_left))
+        self.ui.ref_avg_num_ui.setText(str(self.shared_vars.ref_avg_num))
+        self.ui.x_stop_pos_ui.setText(str(self.shared_vars.xstop_coordinate))
+        self.ui.x_start_pos_ui.setText(str(self.shared_vars.xstart_coordinate))
+        self.ui.x_step_ui.setText(str(self.shared_vars.x_step))
+        self.ui.ui_y_start_pos.setText(str(self.shared_vars.ystart_coordinate))
+        self.ui.ui_y_stop_pos.setText(str(self.shared_vars.ystop_coordinate))
+        self.ui.y_step.setText(str(self.shared_vars.ystep))
+        self.ui.gaussian_std_ui.setText(str(self.shared_vars.gaussian_std_ui))
+        self.ui.gaussian_pos_ui.setText(str(self.shared_vars.gaussian_pos))
 
     def activate3Dmeas(self):
         self.ui.StartCscanButton.setEnabled(True)
@@ -317,6 +334,30 @@ class win(QtWidgets.QMainWindow):
         self.shared_vars.sample_min = int(self.ui.sampling_start_ui.text())
         self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
         self.shared_vars.sig_delay = str(self.ui.trig_delay.text())
+
+    def set_parameters_to_save(self):
+        # READ OUT GUI PARAMS TO SET THEM
+        # Part of buff <self.shared_vars.samples_num>
+        self.shared_vars.idle_time = float(self.ui.a_idle_time.text())
+        self.shared_vars.wave_left = float(self.ui.wave_left_ui.text())
+        self.shared_vars.wave_right = float(self.ui.wave_right_ui.text())
+        self.shared_vars.sample_min = int(self.ui.sampling_start_ui.text())
+        self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
+        self.shared_vars.samples_num = self.shared_vars.sample_max - self.shared_vars.sample_min
+        self.shared_vars.sig_delay = str(self.ui.trig_delay.text())
+        self.shared_vars.avg_num = int(self.ui.avg_num_ui.text())
+        self.shared_vars.ref_avg_num = int(self.ui.ref_avg_num_ui.text())
+        self.shared_vars.x_step = float(self.ui.x_step_ui.text())
+        self.shared_vars.xstart_coordinate = float(self.ui.x_start_pos_ui.text())
+        self.shared_vars.xstop_coordinate = float(self.ui.x_stop_pos_ui.text())
+        self.shared_vars.ystep = float(self.ui.y_step.text())
+        self.shared_vars.ystart_coordinate = float(self.ui.ui_y_start_pos.text())
+        self.shared_vars.ystop_coordinate = float(self.ui.ui_y_stop_pos.text())
+        self.shared_vars.gaussian_sigma = float(self.ui.gaussian_std_ui.text())
+        self.shared_vars.gaussian_pos = float(self.ui.gaussian_pos_ui.text())
+        self.shared_vars.param1 = self.ui.param1.text()
+        self.shared_vars.filename = self.ui.filenameline.text()
+        self.shared_vars.log_coeff = float(self.ui.log10_coef.text())
 
     def reset_parameters(self):
         # READ OUT GUI PARAMS TO SET THEM
@@ -407,10 +448,10 @@ class win(QtWidgets.QMainWindow):
         self.shared_vars.samples_num = self.shared_vars.sample_max - \
             self.shared_vars.sample_min
 
-        self.shared_vars.wave_left = int(self.ui.wave_left_ui.text())
-        self.shared_vars.wave_right = int(self.ui.wave_right_ui.text())
-        self.shared_vars.gaussian_sigma = int(self.ui.gaussian_std_ui.text())
-        self.shared_vars.gaussian_pos = int(self.ui.gaussian_pos_ui.text())
+        self.shared_vars.wave_left = float(self.ui.wave_left_ui.text())
+        self.shared_vars.wave_right = float(self.ui.wave_right_ui.text())
+        self.shared_vars.gaussian_sigma = float(self.ui.gaussian_std_ui.text())
+        self.shared_vars.gaussian_pos = float(self.ui.gaussian_pos_ui.text())
         self.ui.logbrowser.append(
             '\nBandwidth SET, LOW Wavelength: ' + str(self.shared_vars.wave_left))
         self.ui.logbrowser.append(
@@ -484,6 +525,7 @@ class win(QtWidgets.QMainWindow):
     def resarray(self):
         self.ui.logbrowser.append('Parameters (re)set, (re)start')
         self.shared_vars.flag = 0
+        self.ui.logbrowser.append(str(self.shared_vars.param1))
 
     def status_ui_measurements_started(self):
         self.ui.InitButton.setEnabled(False)
@@ -850,25 +892,28 @@ class PostProcessingThread(QtCore.QThread):
         print(self.shared_vars.gaussian_sigma)
         print(self.shared_vars.gaussian_pos)
         # PROCESS
-        self.local_topost = np.copy(self.shared_vars.raw_data)
-        self.local_scan = scanProcess(
-            np.flip(
-                remap_to_k(
-                    self.local_topost,
-                    self.shared_vars.reference_spectrum,
-                    self.shared_vars.wave_left,
-                    self.shared_vars.wave_right,
-                    self.shared_vars.cal_vector,
-                    self.shared_vars.boundaries,
-                    self.shared_vars.samples_num),
-                0),
-            self.shared_vars.gaussian_window)
-        self.local_scanf = np.rot90(self.local_scan)
-        # AVERAGE WITH MEAN FOURIER SPACE
-        self.local_purescn = self.local_scanf[int(self.shared_vars.samples_num / 2):int(
-            self.shared_vars.samples_num / 2 + self.shared_vars.z_sample_num), :]
-        self.shared_vars.b_scan = np.flip(self.local_purescn, 1)
-        del self.local_topost
+        if self.shared_vars.raw_data is not None:
+            self.local_topost = np.copy(self.shared_vars.raw_data)
+            self.local_scan = scanProcess(
+                np.flip(
+                    remap_to_k(
+                        self.local_topost,
+                        self.shared_vars.reference_spectrum,
+                        self.shared_vars.wave_left,
+                        self.shared_vars.wave_right,
+                        self.shared_vars.cal_vector,
+                        self.shared_vars.boundaries,
+                        self.shared_vars.samples_num),
+                    0),
+                self.shared_vars.gaussian_window)
+            self.local_scanf = np.rot90(self.local_scan)
+            # AVERAGE WITH MEAN FOURIER SPACE
+            self.local_purescn = self.local_scanf[int(self.shared_vars.samples_num / 2):int(
+                self.shared_vars.samples_num / 2 + self.shared_vars.z_sample_num), :]
+            self.shared_vars.b_scan = np.flip(self.local_purescn, 1)
+            del self.local_topost
+        else:
+            print('No rawdata stored in memory')
 
 
 class YstageInitThread(QtCore.QThread):
@@ -903,7 +948,7 @@ class InitializationThread(QtCore.QThread):
 
     def run(self):
         global shutt  # an example if some shutter should be loaded
-
+        self.shared_vars.load_parameters()
         if self.shared_vars.cal_vector is not None and self.shared_vars.boundaries is not None:
             self.init_msg = 'Calibration vector loaded'
             self.init_status.emit(self.init_msg)
@@ -1046,11 +1091,13 @@ class SaveDataThread(QtCore.QThread):
 class SaveParamsThread(QtCore.QThread):
     status = QtCore.Signal(object)
 
-    def __init__(self, parent=win):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         np.save('./settings/ref.npy', self.shared_vars.reference_spectrum)
+        self.shared_vars.save_parameters()
 
 
 if __name__ == "__main__":
