@@ -1,4 +1,6 @@
 # Execute to convert ui to py
 
-pyside2-uic design_gui.ui -o proc_ui.py
+#to convert to py:
 
+pyside6-uic ./uis/design_gui.ui -o ./modules/proc_ui.py 
+pyside6-uic ./uis/help_ui.ui -o ./modules/help_ui.py 

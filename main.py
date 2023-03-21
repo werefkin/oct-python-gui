@@ -1,12 +1,12 @@
 import sys
-from proc_ui import Ui_MainWindow
-from threading import Lock      # TO QUEUE THREADS FOR BUFFER_DATA (NOT USED)
-from datetime import datetime
-import time
-import numpy as np
 from modules.oct_lib import remap_to_k, scanProcess
 from modules.shared_vars import SharedVariables
 from modules.get_buffer_thread import GetBufferThread
+from modules.proc_ui import Ui_MainWindow
+from modules.help_ui import Ui_HelpWindow
+from datetime import datetime
+import time
+import numpy as np
 import serial
 import serial.tools.list_ports
 import warnings
@@ -15,23 +15,17 @@ from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import Slot
 import qtmodern.styles
 import qtmodern.windows
-from help_ui import Ui_HelpWindow
 from scipy.signal import decimate
 import tifffile as tif
 import os
-import PySide6
-import logging
 from ctypes import windll  # Change the timer resolution of Windows
+import logging
 
 # Change the timer resolution of Windows to 1 ms
 timeBeginPeriod = windll.winmm.timeBeginPeriod
 timeBeginPeriod(1)  # Change the timer resolution of Windows
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
-dirname = os.path.dirname(PySide6.__file__)
-plugin_path = os.path.join(dirname, 'plugins', 'platforms')
-os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
-data_lock = Lock()  # TO QUEUE THREADS FOR BUFFER_DATA (NOT USED)
 
 
 class win(QtWidgets.QMainWindow):
@@ -1115,4 +1109,4 @@ if __name__ == "__main__":
     qr.moveCenter(cp)
     mwins.move(qr.topLeft())
     mwins.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -3,18 +3,26 @@
 ################################################################################
 ## Form generated from reading UI file 'design_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.2
+## Created by: Qt User Interface Compiler version 6.4.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
+    QGroupBox, QHBoxLayout, QLabel, QLayout,
+    QLineEdit, QMainWindow, QMenu, QMenuBar,
+    QProgressBar, QPushButton, QRadioButton, QSizePolicy,
+    QTextBrowser, QToolButton, QVBoxLayout, QWidget)
 
-from pyqtgraph import PlotWidget
-from pyqtgraph import ImageView
-
+from pyqtgraph import (ImageView, PlotWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -25,7 +33,6 @@ class Ui_MainWindow(object):
         font = QFont()
         font.setBold(False)
         font.setItalic(False)
-        font.setLegacyWeight(50)
         font.setStrikeOut(False)
         MainWindow.setFont(font)
         icon = QIcon()
@@ -60,7 +67,6 @@ class Ui_MainWindow(object):
         font1 = QFont()
         font1.setPointSize(10)
         font1.setBold(True)
-        font1.setLegacyWeight(75)
         self.group_VisualizationSaving.setFont(font1)
         self.gridLayout_2 = QGridLayout(self.group_VisualizationSaving)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
@@ -75,7 +81,6 @@ class Ui_MainWindow(object):
         font2 = QFont()
         font2.setPointSize(8)
         font2.setBold(True)
-        font2.setLegacyWeight(75)
         self.label_Aspect.setFont(font2)
         self.label_Aspect.setStyleSheet(u"")
 
@@ -83,7 +88,7 @@ class Ui_MainWindow(object):
 
         self.aspect_ratio = QLineEdit(self.group_VisualizationSaving)
         self.aspect_ratio.setObjectName(u"aspect_ratio")
-        self.aspect_ratio.setMinimumSize(QSize(0, 15))
+        self.aspect_ratio.setMinimumSize(QSize(0, 20))
         self.aspect_ratio.setMaximumSize(QSize(16777215, 16777215))
         self.aspect_ratio.setStyleSheet(u"")
 
@@ -113,9 +118,9 @@ class Ui_MainWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.log10_coef.sizePolicy().hasHeightForWidth())
         self.log10_coef.setSizePolicy(sizePolicy1)
-        self.log10_coef.setMinimumSize(QSize(0, 15))
+        self.log10_coef.setMinimumSize(QSize(0, 20))
         self.log10_coef.setMaximumSize(QSize(16777215, 16777215))
-        self.log10_coef.setStyleSheet(u"4D0")
+        self.log10_coef.setStyleSheet(u"")
 
         self.horizontalLayout_Log10Coef.addWidget(self.log10_coef)
 
@@ -124,7 +129,7 @@ class Ui_MainWindow(object):
 
         self.filenameline = QLineEdit(self.group_VisualizationSaving)
         self.filenameline.setObjectName(u"filenameline")
-        self.filenameline.setMinimumSize(QSize(0, 15))
+        self.filenameline.setMinimumSize(QSize(0, 20))
         self.filenameline.setMaximumSize(QSize(16777215, 16777215))
 
         self.gridLayout_VisualizationSaving.addWidget(self.filenameline, 3, 4, 1, 1)
@@ -133,7 +138,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_directory.setObjectName(u"horizontalLayout_directory")
         self.FolderLine = QLineEdit(self.group_VisualizationSaving)
         self.FolderLine.setObjectName(u"FolderLine")
-        self.FolderLine.setMinimumSize(QSize(200, 15))
+        self.FolderLine.setMinimumSize(QSize(200, 20))
 
         self.horizontalLayout_directory.addWidget(self.FolderLine)
 
@@ -144,7 +149,7 @@ class Ui_MainWindow(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.FolderButton.sizePolicy().hasHeightForWidth())
         self.FolderButton.setSizePolicy(sizePolicy2)
-        self.FolderButton.setMinimumSize(QSize(0, 24))
+        self.FolderButton.setMinimumSize(QSize(0, 20))
         self.FolderButton.setMaximumSize(QSize(16777215, 20))
         self.FolderButton.setCursor(QCursor(Qt.PointingHandCursor))
 
@@ -168,16 +173,14 @@ class Ui_MainWindow(object):
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.SaveButton.sizePolicy().hasHeightForWidth())
         self.SaveButton.setSizePolicy(sizePolicy3)
-        self.SaveButton.setMinimumSize(QSize(0, 24))
+        self.SaveButton.setMinimumSize(QSize(0, 20))
         self.SaveButton.setMaximumSize(QSize(16777215, 20))
         font3 = QFont()
         font3.setPointSize(9)
         font3.setBold(False)
-        font3.setLegacyWeight(50)
         self.SaveButton.setFont(font3)
         self.SaveButton.setCursor(QCursor(Qt.PointingHandCursor))
-        self.SaveButton.setStyleSheet(u"round-color: rgb(85, 196, 255); }\n"
-"")
+        self.SaveButton.setStyleSheet(u"")
 
         self.gridLayout_VisualizationSaving.addWidget(self.SaveButton, 3, 5, 1, 1)
 
@@ -188,7 +191,7 @@ class Ui_MainWindow(object):
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.PlotButton.sizePolicy().hasHeightForWidth())
         self.PlotButton.setSizePolicy(sizePolicy4)
-        self.PlotButton.setMinimumSize(QSize(0, 24))
+        self.PlotButton.setMinimumSize(QSize(0, 20))
         self.PlotButton.setMaximumSize(QSize(16777215, 20))
         self.PlotButton.setFont(font3)
         self.PlotButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -224,8 +227,8 @@ class Ui_MainWindow(object):
 
         self.group_Scanning = QGroupBox(self.centralwidget)
         self.group_Scanning.setObjectName(u"group_Scanning")
-        sizePolicy4.setHeightForWidth(self.group_Scanning.sizePolicy().hasHeightForWidth())
-        self.group_Scanning.setSizePolicy(sizePolicy4)
+        sizePolicy5.setHeightForWidth(self.group_Scanning.sizePolicy().hasHeightForWidth())
+        self.group_Scanning.setSizePolicy(sizePolicy5)
         self.group_Scanning.setMinimumSize(QSize(0, 130))
         self.group_Scanning.setMaximumSize(QSize(16777215, 200))
         self.group_Scanning.setFont(font1)
@@ -233,8 +236,8 @@ class Ui_MainWindow(object):
         self.gridLayout_10.setObjectName(u"gridLayout_10")
         self.group_Bscan = QGroupBox(self.group_Scanning)
         self.group_Bscan.setObjectName(u"group_Bscan")
-        sizePolicy5.setHeightForWidth(self.group_Bscan.sizePolicy().hasHeightForWidth())
-        self.group_Bscan.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.group_Bscan.sizePolicy().hasHeightForWidth())
+        self.group_Bscan.setSizePolicy(sizePolicy4)
         self.verticalLayout_17 = QVBoxLayout(self.group_Bscan)
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.horizontalLayout_XScanParams = QHBoxLayout()
@@ -251,12 +254,12 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_XRange = QHBoxLayout()
         self.horizontalLayout_XRange.setObjectName(u"horizontalLayout_XRange")
+        self.horizontalLayout_XRange.setContentsMargins(-1, -1, -1, 4)
         self.x_start_pos_ui = QLineEdit(self.group_Bscan)
         self.x_start_pos_ui.setObjectName(u"x_start_pos_ui")
-        self.x_start_pos_ui.setMinimumSize(QSize(0, 15))
+        self.x_start_pos_ui.setMinimumSize(QSize(0, 20))
         font4 = QFont()
         font4.setBold(False)
-        font4.setLegacyWeight(50)
         self.x_start_pos_ui.setFont(font4)
         self.x_start_pos_ui.setStyleSheet(u"")
 
@@ -264,7 +267,7 @@ class Ui_MainWindow(object):
 
         self.x_stop_pos_ui = QLineEdit(self.group_Bscan)
         self.x_stop_pos_ui.setObjectName(u"x_stop_pos_ui")
-        self.x_stop_pos_ui.setMinimumSize(QSize(0, 15))
+        self.x_stop_pos_ui.setMinimumSize(QSize(0, 20))
         self.x_stop_pos_ui.setFont(font4)
         self.x_stop_pos_ui.setStyleSheet(u"")
 
@@ -275,7 +278,7 @@ class Ui_MainWindow(object):
         self.Button_XMoveTo.setEnabled(False)
         sizePolicy3.setHeightForWidth(self.Button_XMoveTo.sizePolicy().hasHeightForWidth())
         self.Button_XMoveTo.setSizePolicy(sizePolicy3)
-        self.Button_XMoveTo.setMinimumSize(QSize(0, 24))
+        self.Button_XMoveTo.setMinimumSize(QSize(0, 20))
         self.Button_XMoveTo.setMaximumSize(QSize(16777215, 20))
         self.Button_XMoveTo.setFont(font4)
 
@@ -296,7 +299,7 @@ class Ui_MainWindow(object):
 
         self.x_step_ui = QLineEdit(self.group_Bscan)
         self.x_step_ui.setObjectName(u"x_step_ui")
-        self.x_step_ui.setMinimumSize(QSize(0, 15))
+        self.x_step_ui.setMinimumSize(QSize(0, 20))
         self.x_step_ui.setFont(font4)
         self.x_step_ui.setStyleSheet(u"")
 
@@ -310,14 +313,13 @@ class Ui_MainWindow(object):
         self.Bscan_MeasureButton.setEnabled(False)
         sizePolicy3.setHeightForWidth(self.Bscan_MeasureButton.sizePolicy().hasHeightForWidth())
         self.Bscan_MeasureButton.setSizePolicy(sizePolicy3)
-        self.Bscan_MeasureButton.setMinimumSize(QSize(0, 24))
+        self.Bscan_MeasureButton.setMinimumSize(QSize(0, 20))
         self.Bscan_MeasureButton.setMaximumSize(QSize(16777215, 20))
         self.Bscan_MeasureButton.setFont(font3)
         self.Bscan_MeasureButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.Bscan_MeasureButton.setMouseTracking(False)
         self.Bscan_MeasureButton.setFocusPolicy(Qt.StrongFocus)
-        self.Bscan_MeasureButton.setStyleSheet(u"olor: rgb(85, 196, 255); }\n"
-"")
+        self.Bscan_MeasureButton.setStyleSheet(u"")
         self.Bscan_MeasureButton.setCheckable(False)
         self.Bscan_MeasureButton.setAutoRepeat(False)
         self.Bscan_MeasureButton.setAutoDefault(False)
@@ -336,6 +338,8 @@ class Ui_MainWindow(object):
 
         self.group_Cscan = QGroupBox(self.group_Scanning)
         self.group_Cscan.setObjectName(u"group_Cscan")
+        sizePolicy4.setHeightForWidth(self.group_Cscan.sizePolicy().hasHeightForWidth())
+        self.group_Cscan.setSizePolicy(sizePolicy4)
         self.horizontalLayout_32 = QHBoxLayout(self.group_Cscan)
         self.horizontalLayout_32.setObjectName(u"horizontalLayout_32")
         self.verticalLayout_YScanParams = QVBoxLayout()
@@ -358,7 +362,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_YScanRange.setObjectName(u"horizontalLayout_YScanRange")
         self.ui_y_start_pos = QLineEdit(self.group_Cscan)
         self.ui_y_start_pos.setObjectName(u"ui_y_start_pos")
-        self.ui_y_start_pos.setMinimumSize(QSize(0, 15))
+        self.ui_y_start_pos.setMinimumSize(QSize(0, 20))
         self.ui_y_start_pos.setFont(font4)
 
         self.horizontalLayout_YScanRange.addWidget(self.ui_y_start_pos)
@@ -370,7 +374,7 @@ class Ui_MainWindow(object):
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.ui_y_stop_pos.sizePolicy().hasHeightForWidth())
         self.ui_y_stop_pos.setSizePolicy(sizePolicy6)
-        self.ui_y_stop_pos.setMinimumSize(QSize(5, 15))
+        self.ui_y_stop_pos.setMinimumSize(QSize(5, 20))
         self.ui_y_stop_pos.setFont(font4)
 
         self.horizontalLayout_YScanRange.addWidget(self.ui_y_stop_pos)
@@ -393,7 +397,7 @@ class Ui_MainWindow(object):
         self.y_step.setObjectName(u"y_step")
         sizePolicy6.setHeightForWidth(self.y_step.sizePolicy().hasHeightForWidth())
         self.y_step.setSizePolicy(sizePolicy6)
-        self.y_step.setMinimumSize(QSize(5, 15))
+        self.y_step.setMinimumSize(QSize(5, 20))
         self.y_step.setFont(font4)
 
         self.horizontalLayout_YStep.addWidget(self.y_step)
@@ -407,7 +411,7 @@ class Ui_MainWindow(object):
         self.InitializeYstageButton.setObjectName(u"InitializeYstageButton")
         sizePolicy3.setHeightForWidth(self.InitializeYstageButton.sizePolicy().hasHeightForWidth())
         self.InitializeYstageButton.setSizePolicy(sizePolicy3)
-        self.InitializeYstageButton.setMinimumSize(QSize(0, 24))
+        self.InitializeYstageButton.setMinimumSize(QSize(0, 20))
         self.InitializeYstageButton.setMaximumSize(QSize(16777215, 20))
         self.InitializeYstageButton.setFont(font3)
         self.InitializeYstageButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -419,7 +423,7 @@ class Ui_MainWindow(object):
         self.StartCscanButton.setEnabled(False)
         sizePolicy3.setHeightForWidth(self.StartCscanButton.sizePolicy().hasHeightForWidth())
         self.StartCscanButton.setSizePolicy(sizePolicy3)
-        self.StartCscanButton.setMinimumSize(QSize(0, 24))
+        self.StartCscanButton.setMinimumSize(QSize(0, 20))
         self.StartCscanButton.setMaximumSize(QSize(16777215, 20))
         self.StartCscanButton.setFont(font3)
         self.StartCscanButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -440,7 +444,6 @@ class Ui_MainWindow(object):
         font5 = QFont()
         font5.setPointSize(8)
         font5.setBold(True)
-        font5.setLegacyWeight(75)
         font5.setKerning(True)
         self.label.setFont(font5)
 #if QT_CONFIG(statustip)
@@ -456,7 +459,7 @@ class Ui_MainWindow(object):
         self.YStageMoveToButton.setEnabled(False)
         sizePolicy3.setHeightForWidth(self.YStageMoveToButton.sizePolicy().hasHeightForWidth())
         self.YStageMoveToButton.setSizePolicy(sizePolicy3)
-        self.YStageMoveToButton.setMinimumSize(QSize(0, 24))
+        self.YStageMoveToButton.setMinimumSize(QSize(0, 20))
         self.YStageMoveToButton.setMaximumSize(QSize(16777215, 20))
         self.YStageMoveToButton.setFont(font4)
 
@@ -467,7 +470,7 @@ class Ui_MainWindow(object):
         self.YStageUpButton.setEnabled(False)
         sizePolicy3.setHeightForWidth(self.YStageUpButton.sizePolicy().hasHeightForWidth())
         self.YStageUpButton.setSizePolicy(sizePolicy3)
-        self.YStageUpButton.setMinimumSize(QSize(0, 24))
+        self.YStageUpButton.setMinimumSize(QSize(0, 20))
         self.YStageUpButton.setMaximumSize(QSize(16777215, 20))
         self.YStageUpButton.setFont(font4)
         self.YStageUpButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -479,7 +482,7 @@ class Ui_MainWindow(object):
         self.YStageDownButton.setEnabled(False)
         sizePolicy3.setHeightForWidth(self.YStageDownButton.sizePolicy().hasHeightForWidth())
         self.YStageDownButton.setSizePolicy(sizePolicy3)
-        self.YStageDownButton.setMinimumSize(QSize(0, 24))
+        self.YStageDownButton.setMinimumSize(QSize(0, 20))
         self.YStageDownButton.setMaximumSize(QSize(16777215, 20))
         self.YStageDownButton.setFont(font4)
         self.YStageDownButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -516,7 +519,7 @@ class Ui_MainWindow(object):
         self.StopButton.setObjectName(u"StopButton")
         sizePolicy3.setHeightForWidth(self.StopButton.sizePolicy().hasHeightForWidth())
         self.StopButton.setSizePolicy(sizePolicy3)
-        self.StopButton.setMinimumSize(QSize(0, 24))
+        self.StopButton.setMinimumSize(QSize(0, 20))
         self.StopButton.setMaximumSize(QSize(16777215, 20))
         self.StopButton.setFont(font3)
         self.StopButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -554,8 +557,7 @@ class Ui_MainWindow(object):
         self.InitButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.InitButton.setMouseTracking(False)
         self.InitButton.setFocusPolicy(Qt.StrongFocus)
-        self.InitButton.setStyleSheet(u"olor: rgb(85, 196, 255); }\n"
-"")
+        self.InitButton.setStyleSheet(u"")
         self.InitButton.setCheckable(False)
         self.InitButton.setAutoRepeat(False)
         self.InitButton.setAutoDefault(False)
@@ -593,7 +595,6 @@ class Ui_MainWindow(object):
         self.label_param1.setMinimumSize(QSize(0, 15))
         font6 = QFont()
         font6.setBold(True)
-        font6.setLegacyWeight(75)
         self.label_param1.setFont(font6)
         self.label_param1.setStyleSheet(u"")
 
@@ -601,10 +602,9 @@ class Ui_MainWindow(object):
 
         self.param1 = QLineEdit(self.group_AcquisitionParameters)
         self.param1.setObjectName(u"param1")
-        self.param1.setMinimumSize(QSize(0, 15))
+        self.param1.setMinimumSize(QSize(0, 20))
         font7 = QFont()
         font7.setBold(False)
-        font7.setLegacyWeight(50)
         font7.setKerning(False)
         self.param1.setFont(font7)
         self.param1.setStyleSheet(u"")
@@ -626,7 +626,7 @@ class Ui_MainWindow(object):
 
         self.trig_delay = QLineEdit(self.group_AcquisitionParameters)
         self.trig_delay.setObjectName(u"trig_delay")
-        self.trig_delay.setMinimumSize(QSize(0, 15))
+        self.trig_delay.setMinimumSize(QSize(0, 20))
         self.trig_delay.setFont(font7)
         self.trig_delay.setStyleSheet(u"")
 
@@ -647,7 +647,7 @@ class Ui_MainWindow(object):
 
         self.param2 = QLineEdit(self.group_AcquisitionParameters)
         self.param2.setObjectName(u"param2")
-        self.param2.setMinimumSize(QSize(0, 15))
+        self.param2.setMinimumSize(QSize(0, 20))
         self.param2.setFont(font7)
         self.param2.setStyleSheet(u"")
 
@@ -660,7 +660,7 @@ class Ui_MainWindow(object):
         self.ApplyButton.setObjectName(u"ApplyButton")
         sizePolicy4.setHeightForWidth(self.ApplyButton.sizePolicy().hasHeightForWidth())
         self.ApplyButton.setSizePolicy(sizePolicy4)
-        self.ApplyButton.setMinimumSize(QSize(0, 24))
+        self.ApplyButton.setMinimumSize(QSize(0, 20))
         self.ApplyButton.setMaximumSize(QSize(16777215, 20))
         self.ApplyButton.setFont(font3)
         self.ApplyButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -726,9 +726,9 @@ class Ui_MainWindow(object):
 
         self.a_idle_time = QLineEdit(self.group_OCTParams)
         self.a_idle_time.setObjectName(u"a_idle_time")
-        self.a_idle_time.setMinimumSize(QSize(0, 15))
+        self.a_idle_time.setMinimumSize(QSize(0, 20))
         self.a_idle_time.setFont(font4)
-        self.a_idle_time.setStyleSheet(u"r: #D5D4D0")
+        self.a_idle_time.setStyleSheet(u"")
 
         self.horizontalLayout_ATimeSleep.addWidget(self.a_idle_time)
 
@@ -747,9 +747,9 @@ class Ui_MainWindow(object):
 
         self.avg_num_ui = QLineEdit(self.group_OCTParams)
         self.avg_num_ui.setObjectName(u"avg_num_ui")
-        self.avg_num_ui.setMinimumSize(QSize(0, 15))
+        self.avg_num_ui.setMinimumSize(QSize(0, 20))
         self.avg_num_ui.setFont(font7)
-        self.avg_num_ui.setStyleSheet(u"4D0")
+        self.avg_num_ui.setStyleSheet(u"")
 
         self.horizontalLayout_Averaging.addWidget(self.avg_num_ui)
 
@@ -760,7 +760,7 @@ class Ui_MainWindow(object):
         self.SetOCTParamsButton.setObjectName(u"SetOCTParamsButton")
         sizePolicy4.setHeightForWidth(self.SetOCTParamsButton.sizePolicy().hasHeightForWidth())
         self.SetOCTParamsButton.setSizePolicy(sizePolicy4)
-        self.SetOCTParamsButton.setMinimumSize(QSize(0, 24))
+        self.SetOCTParamsButton.setMinimumSize(QSize(0, 20))
         self.SetOCTParamsButton.setMaximumSize(QSize(16777215, 20))
         self.SetOCTParamsButton.setFont(font3)
         self.SetOCTParamsButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -822,7 +822,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_Bandwidth.setObjectName(u"horizontalLayout_Bandwidth")
         self.wave_left_ui = QLineEdit(self.group_PostProcessParams)
         self.wave_left_ui.setObjectName(u"wave_left_ui")
-        self.wave_left_ui.setMinimumSize(QSize(0, 15))
+        self.wave_left_ui.setMinimumSize(QSize(0, 20))
         self.wave_left_ui.setFont(font4)
         self.wave_left_ui.setStyleSheet(u"")
 
@@ -830,7 +830,7 @@ class Ui_MainWindow(object):
 
         self.wave_right_ui = QLineEdit(self.group_PostProcessParams)
         self.wave_right_ui.setObjectName(u"wave_right_ui")
-        self.wave_right_ui.setMinimumSize(QSize(0, 15))
+        self.wave_right_ui.setMinimumSize(QSize(0, 20))
         self.wave_right_ui.setFont(font4)
         self.wave_right_ui.setStyleSheet(u"")
 
@@ -851,7 +851,7 @@ class Ui_MainWindow(object):
 
         self.gaussian_std_ui = QLineEdit(self.group_PostProcessParams)
         self.gaussian_std_ui.setObjectName(u"gaussian_std_ui")
-        self.gaussian_std_ui.setMinimumSize(QSize(0, 15))
+        self.gaussian_std_ui.setMinimumSize(QSize(0, 20))
         self.gaussian_std_ui.setFont(font4)
         self.gaussian_std_ui.setStyleSheet(u"")
 
@@ -872,7 +872,7 @@ class Ui_MainWindow(object):
 
         self.gaussian_pos_ui = QLineEdit(self.group_PostProcessParams)
         self.gaussian_pos_ui.setObjectName(u"gaussian_pos_ui")
-        self.gaussian_pos_ui.setMinimumSize(QSize(0, 15))
+        self.gaussian_pos_ui.setMinimumSize(QSize(0, 20))
         self.gaussian_pos_ui.setFont(font4)
         self.gaussian_pos_ui.setStyleSheet(u"")
 
@@ -885,7 +885,7 @@ class Ui_MainWindow(object):
         self.SetProcParamsButton.setObjectName(u"SetProcParamsButton")
         sizePolicy4.setHeightForWidth(self.SetProcParamsButton.sizePolicy().hasHeightForWidth())
         self.SetProcParamsButton.setSizePolicy(sizePolicy4)
-        self.SetProcParamsButton.setMinimumSize(QSize(0, 24))
+        self.SetProcParamsButton.setMinimumSize(QSize(0, 20))
         self.SetProcParamsButton.setMaximumSize(QSize(16777215, 20))
         self.SetProcParamsButton.setFont(font3)
         self.SetProcParamsButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -897,7 +897,7 @@ class Ui_MainWindow(object):
         self.ApplyProcButton.setObjectName(u"ApplyProcButton")
         sizePolicy4.setHeightForWidth(self.ApplyProcButton.sizePolicy().hasHeightForWidth())
         self.ApplyProcButton.setSizePolicy(sizePolicy4)
-        self.ApplyProcButton.setMinimumSize(QSize(0, 24))
+        self.ApplyProcButton.setMinimumSize(QSize(0, 20))
         self.ApplyProcButton.setMaximumSize(QSize(16777215, 20))
         self.ApplyProcButton.setFont(font3)
 
@@ -926,12 +926,11 @@ class Ui_MainWindow(object):
         self.ReferenceButton.setEnabled(False)
         sizePolicy3.setHeightForWidth(self.ReferenceButton.sizePolicy().hasHeightForWidth())
         self.ReferenceButton.setSizePolicy(sizePolicy3)
-        self.ReferenceButton.setMinimumSize(QSize(0, 24))
+        self.ReferenceButton.setMinimumSize(QSize(0, 20))
         self.ReferenceButton.setMaximumSize(QSize(16777215, 20))
         self.ReferenceButton.setFont(font3)
         self.ReferenceButton.setCursor(QCursor(Qt.PointingHandCursor))
-        self.ReferenceButton.setStyleSheet(u"round-color: rgb(85, 196, 255); }\n"
-"")
+        self.ReferenceButton.setStyleSheet(u"")
 
         self.gridLayout_3.addWidget(self.ReferenceButton, 3, 0, 1, 1)
 
@@ -949,13 +948,13 @@ class Ui_MainWindow(object):
         self.ref_avg_num_ui.setObjectName(u"ref_avg_num_ui")
         sizePolicy6.setHeightForWidth(self.ref_avg_num_ui.sizePolicy().hasHeightForWidth())
         self.ref_avg_num_ui.setSizePolicy(sizePolicy6)
-        self.ref_avg_num_ui.setMinimumSize(QSize(0, 15))
+        self.ref_avg_num_ui.setMinimumSize(QSize(0, 20))
         self.ref_avg_num_ui.setMaximumSize(QSize(16777215, 16777215))
         font8 = QFont()
         font8.setPointSize(8)
         font8.setKerning(False)
         self.ref_avg_num_ui.setFont(font8)
-        self.ref_avg_num_ui.setStyleSheet(u"d-color: #D5D4D0")
+        self.ref_avg_num_ui.setStyleSheet(u"")
 
         self.horizontalLayout_13.addWidget(self.ref_avg_num_ui)
 
@@ -964,7 +963,7 @@ class Ui_MainWindow(object):
 
         self.refprogressBar = QProgressBar(self.group_ReferencingBox)
         self.refprogressBar.setObjectName(u"refprogressBar")
-        self.refprogressBar.setMinimumSize(QSize(0, 15))
+        self.refprogressBar.setMinimumSize(QSize(0, 20))
         self.refprogressBar.setStyleSheet(u"")
         self.refprogressBar.setValue(100)
 
@@ -977,7 +976,7 @@ class Ui_MainWindow(object):
         self.ResetReferenceButton.setObjectName(u"ResetReferenceButton")
         sizePolicy3.setHeightForWidth(self.ResetReferenceButton.sizePolicy().hasHeightForWidth())
         self.ResetReferenceButton.setSizePolicy(sizePolicy3)
-        self.ResetReferenceButton.setMinimumSize(QSize(0, 24))
+        self.ResetReferenceButton.setMinimumSize(QSize(0, 20))
         self.ResetReferenceButton.setMaximumSize(QSize(16777215, 20))
         self.ResetReferenceButton.setFont(font3)
         self.ResetReferenceButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -1037,7 +1036,7 @@ class Ui_MainWindow(object):
         sizePolicy9.setVerticalStretch(0)
         sizePolicy9.setHeightForWidth(self.sampling_start_ui.sizePolicy().hasHeightForWidth())
         self.sampling_start_ui.setSizePolicy(sizePolicy9)
-        self.sampling_start_ui.setMinimumSize(QSize(15, 15))
+        self.sampling_start_ui.setMinimumSize(QSize(15, 20))
         self.sampling_start_ui.setFont(font4)
 
         self.horizontalLayout_SamplingRange.addWidget(self.sampling_start_ui)
@@ -1046,7 +1045,7 @@ class Ui_MainWindow(object):
         self.sampling_stop_ui.setObjectName(u"sampling_stop_ui")
         sizePolicy9.setHeightForWidth(self.sampling_stop_ui.sizePolicy().hasHeightForWidth())
         self.sampling_stop_ui.setSizePolicy(sizePolicy9)
-        self.sampling_stop_ui.setMinimumSize(QSize(0, 15))
+        self.sampling_stop_ui.setMinimumSize(QSize(0, 20))
         self.sampling_stop_ui.setFont(font4)
 
         self.horizontalLayout_SamplingRange.addWidget(self.sampling_stop_ui)
@@ -1060,14 +1059,13 @@ class Ui_MainWindow(object):
         self.StopAcqButton.setObjectName(u"StopAcqButton")
         sizePolicy3.setHeightForWidth(self.StopAcqButton.sizePolicy().hasHeightForWidth())
         self.StopAcqButton.setSizePolicy(sizePolicy3)
-        self.StopAcqButton.setMinimumSize(QSize(15, 24))
+        self.StopAcqButton.setMinimumSize(QSize(15, 20))
         self.StopAcqButton.setMaximumSize(QSize(16777215, 20))
         self.StopAcqButton.setFont(font3)
         self.StopAcqButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.StopAcqButton.setMouseTracking(False)
         self.StopAcqButton.setFocusPolicy(Qt.StrongFocus)
-        self.StopAcqButton.setStyleSheet(u"olor: rgb(85, 196, 255); }\n"
-"")
+        self.StopAcqButton.setStyleSheet(u"")
         self.StopAcqButton.setCheckable(False)
         self.StopAcqButton.setAutoRepeat(False)
         self.StopAcqButton.setAutoDefault(False)
@@ -1079,14 +1077,13 @@ class Ui_MainWindow(object):
         self.SetRangeButton.setObjectName(u"SetRangeButton")
         sizePolicy3.setHeightForWidth(self.SetRangeButton.sizePolicy().hasHeightForWidth())
         self.SetRangeButton.setSizePolicy(sizePolicy3)
-        self.SetRangeButton.setMinimumSize(QSize(15, 24))
+        self.SetRangeButton.setMinimumSize(QSize(15, 20))
         self.SetRangeButton.setMaximumSize(QSize(16777215, 20))
         self.SetRangeButton.setFont(font3)
         self.SetRangeButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.SetRangeButton.setMouseTracking(False)
         self.SetRangeButton.setFocusPolicy(Qt.StrongFocus)
-        self.SetRangeButton.setStyleSheet(u"olor: rgb(85, 196, 255); }\n"
-"")
+        self.SetRangeButton.setStyleSheet(u"")
         self.SetRangeButton.setCheckable(False)
         self.SetRangeButton.setAutoRepeat(False)
         self.SetRangeButton.setAutoDefault(False)
@@ -1113,10 +1110,9 @@ class Ui_MainWindow(object):
         sizePolicy10.setHeightForWidth(self.by_me.sizePolicy().hasHeightForWidth())
         self.by_me.setSizePolicy(sizePolicy10)
         font10 = QFont()
-        font10.setFamily(u"MS Shell Dlg 2")
+        font10.setFamilies([u"MS Shell Dlg 2"])
         font10.setPointSize(10)
         font10.setBold(False)
-        font10.setLegacyWeight(50)
         self.by_me.setFont(font10)
         self.by_me.setStyleSheet(u"")
         self.by_me.setTextFormat(Qt.PlainText)
