@@ -1102,14 +1102,7 @@ class SaveParamsThread(QtCore.QThread):
 
 if __name__ == "__main__":
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
-    # FIX Problem for High DPI and Scale above 100%
     os.environ["QT_FONT_DPI"] = "96"
-    if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-        QtWidgets.QApplication.setAttribute(
-            QtCore.Qt.AA_EnableHighDpiScaling, True)
-    if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-        QtWidgets.QApplication.setAttribute(
-            QtCore.Qt.AA_UseHighDpiPixmaps, True)
     app = QtCore.QCoreApplication.instance()
     if app is None:
         app = QtWidgets.QApplication(sys.argv)
