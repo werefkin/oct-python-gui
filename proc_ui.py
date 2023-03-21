@@ -8,9 +8,9 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 from pyqtgraph import PlotWidget
 from pyqtgraph import ImageView
@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
         font = QFont()
         font.setBold(False)
         font.setItalic(False)
-        font.setWeight(50)
+        font.setLegacyWeight(50)
         font.setStrikeOut(False)
         MainWindow.setFont(font)
         icon = QIcon()
@@ -60,7 +60,7 @@ class Ui_MainWindow(object):
         font1 = QFont()
         font1.setPointSize(10)
         font1.setBold(True)
-        font1.setWeight(75)
+        font1.setLegacyWeight(75)
         self.group_VisualizationSaving.setFont(font1)
         self.gridLayout_2 = QGridLayout(self.group_VisualizationSaving)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
@@ -75,7 +75,7 @@ class Ui_MainWindow(object):
         font2 = QFont()
         font2.setPointSize(8)
         font2.setBold(True)
-        font2.setWeight(75)
+        font2.setLegacyWeight(75)
         self.label_Aspect.setFont(font2)
         self.label_Aspect.setStyleSheet(u"")
 
@@ -173,7 +173,7 @@ class Ui_MainWindow(object):
         font3 = QFont()
         font3.setPointSize(9)
         font3.setBold(False)
-        font3.setWeight(50)
+        font3.setLegacyWeight(50)
         self.SaveButton.setFont(font3)
         self.SaveButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.SaveButton.setStyleSheet(u"round-color: rgb(85, 196, 255); }\n"
@@ -256,7 +256,7 @@ class Ui_MainWindow(object):
         self.x_start_pos_ui.setMinimumSize(QSize(0, 15))
         font4 = QFont()
         font4.setBold(False)
-        font4.setWeight(50)
+        font4.setLegacyWeight(50)
         self.x_start_pos_ui.setFont(font4)
         self.x_start_pos_ui.setStyleSheet(u"")
 
@@ -440,7 +440,7 @@ class Ui_MainWindow(object):
         font5 = QFont()
         font5.setPointSize(8)
         font5.setBold(True)
-        font5.setWeight(75)
+        font5.setLegacyWeight(75)
         font5.setKerning(True)
         self.label.setFont(font5)
 #if QT_CONFIG(statustip)
@@ -593,7 +593,7 @@ class Ui_MainWindow(object):
         self.label_param1.setMinimumSize(QSize(0, 15))
         font6 = QFont()
         font6.setBold(True)
-        font6.setWeight(75)
+        font6.setLegacyWeight(75)
         self.label_param1.setFont(font6)
         self.label_param1.setStyleSheet(u"")
 
@@ -604,7 +604,7 @@ class Ui_MainWindow(object):
         self.param1.setMinimumSize(QSize(0, 15))
         font7 = QFont()
         font7.setBold(False)
-        font7.setWeight(50)
+        font7.setLegacyWeight(50)
         font7.setKerning(False)
         self.param1.setFont(font7)
         self.param1.setStyleSheet(u"")
@@ -1116,7 +1116,7 @@ class Ui_MainWindow(object):
         font10.setFamily(u"MS Shell Dlg 2")
         font10.setPointSize(10)
         font10.setBold(False)
-        font10.setWeight(50)
+        font10.setLegacyWeight(50)
         self.by_me.setFont(font10)
         self.by_me.setStyleSheet(u"")
         self.by_me.setTextFormat(Qt.PlainText)

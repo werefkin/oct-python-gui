@@ -1,5 +1,5 @@
 import numpy as np
-from PySide2 import QtCore
+from PySide6 import QtCore
 
 
 class GetBufferThread(QtCore.QThread):

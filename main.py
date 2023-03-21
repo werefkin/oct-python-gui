@@ -10,16 +10,16 @@ from modules.get_buffer_thread import GetBufferThread
 import serial
 import serial.tools.list_ports
 import warnings
-from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtWidgets import QApplication, QMessageBox
-from PySide2.QtCore import Slot
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtWidgets import QApplication, QMessageBox
+from PySide6.QtCore import Slot
 import qtmodern.styles
 import qtmodern.windows
 from help_ui import Ui_HelpWindow
 from scipy.signal import decimate
 import tifffile as tif
 import os
-import PySide2
+import PySide6
 import logging
 from ctypes import windll  # Change the timer resolution of Windows
 
@@ -28,7 +28,7 @@ timeBeginPeriod = windll.winmm.timeBeginPeriod
 timeBeginPeriod(1)  # Change the timer resolution of Windows
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
-dirname = os.path.dirname(PySide2.__file__)
+dirname = os.path.dirname(PySide6.__file__)
 plugin_path = os.path.join(dirname, 'plugins', 'platforms')
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 data_lock = Lock()  # TO QUEUE THREADS FOR BUFFER_DATA (NOT USED)
@@ -225,7 +225,7 @@ class win(QtWidgets.QMainWindow):
         self.uis.OKCloseButton.clicked.connect(self.closeWindow)
         self.about = qtmodern.windows.ModernWindow(self.about)
         qr = self.about.frameGeometry()
-        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        cp = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
         qr.moveCenter(cp)
         self.about.move(qr.topLeft())
         self.about.show()
@@ -1118,7 +1118,7 @@ if __name__ == "__main__":
     mwins = win()
     mwins = qtmodern.windows.ModernWindow(mwins)
     qr = mwins.frameGeometry()
-    cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+    cp = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
     qr.moveCenter(cp)
     mwins.move(qr.topLeft())
     mwins.show()
