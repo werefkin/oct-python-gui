@@ -34,3 +34,7 @@ The speed of the step-scan approach seems limited due to (1) the loop rate in Py
 
 ## "uis" folder 
 the `uis` folder contains qtDesigner forms of the GUI to be modified
+
+### Python version
+
+The GUI was tested with Python 3.7, 3.8, 3.10, 3.11; the latest version demonstrated the best preformance
