@@ -893,8 +893,6 @@ class InitializationThread(QtCore.QThread):
 
     def run(self):
         global shutt  # an example if some shutter should be loaded
-        global pidevice
-
         # INIT OF CAMERA
         # #DAQ CONFIGURATION
         try:
