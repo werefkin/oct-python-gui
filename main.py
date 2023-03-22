@@ -189,7 +189,7 @@ class win(QtWidgets.QMainWindow):
                     51),
                 'width': 2},
             name='Gaussian window')
-        self.ui.raw_signal_plot.setYRange(0, 2000)
+        self.ui.raw_signal_plot.setYRange(-2, 2)
         # self.ui.raw_signal_plot.setXRange(0,800)
         self.ui.raw_signal_plot.setClipToView(True)
 
@@ -384,7 +384,7 @@ class win(QtWidgets.QMainWindow):
         self.ui.gaussian.setData(
             decimate(
                 np.interp(
-                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 2000)),
+                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 1)),
                 self.shared_vars.decimation_factor,
                 axis=0))
         self.shared_vars.sig_delay = str(self.ui.trig_delay.text())
@@ -466,7 +466,7 @@ class win(QtWidgets.QMainWindow):
         self.ui.gaussian.setData(
             decimate(
                 np.interp(
-                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 2000)),
+                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 1)),
                 self.shared_vars.decimation_factor,
                 axis=0))
 
@@ -485,7 +485,7 @@ class win(QtWidgets.QMainWindow):
         self.ui.gaussian.setData(
             decimate(
                 np.interp(
-                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 2000)),
+                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 1)),
                 self.shared_vars.decimation_factor,
                 axis=0))
 
@@ -505,7 +505,7 @@ class win(QtWidgets.QMainWindow):
         self.ui.gaussian.setData(
             decimate(
                 np.interp(
-                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 2000)),
+                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 1)),
                 self.shared_vars.decimation_factor,
                 axis=0))
 

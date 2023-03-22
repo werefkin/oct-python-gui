@@ -9,7 +9,7 @@ class SharedVariables:
         self.measurement_flag = 1  # flag to abort measurement
         self.inloop_flag = 1  # flag to abort measurement inside a long loop
         self.idle_time = 0.05  # a-scan idle time (time deley between a-scans); as the system is async the buffer just sleeps while the measurement is done
-        self.decimation_factor = 20  # to downsample Live signals (more efficient plotting)
+        self.decimation_factor = 16  # to downsample Live signals (more efficient plotting)
 
         self.sample_min = 0  # min sample num in the signal
         self.sample_max = 16384  # max sample num in the signal
@@ -110,7 +110,8 @@ class SharedVariables:
             with open('./settings/config.cfg', 'rb') as f:
                 self.PARAMs = pickle.load(f)
                 self.idle_time = self.PARAMs['idle_time']
-                self.decimation_factor = self.PARAMs['decimation_factor']
+                # self.decimation_factor = self.PARAMs['decimation_factor']
+                self.decimation_factor = 16
                 self.sample_min = self.PARAMs['sample_min']
                 self.sample_max = self.PARAMs['sample_max']
                 self.sig_delay = self.PARAMs['sig_delay']
