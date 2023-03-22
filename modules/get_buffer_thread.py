@@ -8,6 +8,9 @@ class GetBufferThread(QtCore.QThread):
         super().__init__()
         self.shared_vars = shared_vars
 
+    def cam_init(self):
+        self.device = True
+
     def run(self):
         self.active = True
         while self.shared_vars.flag == 0:

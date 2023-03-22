@@ -44,7 +44,7 @@ class win(QtWidgets.QMainWindow):
         self.cscan_measurement_thread = VolumeScanningThread(self.shared_vars)
         self.save_params_thread = SaveParamsThread(self.shared_vars)
         self.referencing_thread = GetReferenceThread(self.shared_vars)
-        self.sys_init_thread = InitializationThread(self.shared_vars)
+        self.sys_init_thread = InitializationThread(self.shared_vars, self.buffer_thread)
         self.ystage_init_thread = YstageInitThread(self)
         self.post_process_thread = PostProcessingThread(self.shared_vars)
         self.y_stage_up = YMoveUpByThread(self)
@@ -120,6 +120,7 @@ class win(QtWidgets.QMainWindow):
         self.sys_init_thread.initdone.connect(self.activatemeas)
         self.sys_init_thread.initdone.connect(self.set_saved_parameters)
         self.ystage_init_thread.initdone.connect(self.activate3Dmeas)
+        self.sys_init_thread.initdone.connect(self.reset_parameters)
 
         self.sys_init_thread.initdone.connect(
             self.buffer_thread .start)
@@ -188,7 +189,7 @@ class win(QtWidgets.QMainWindow):
                     51),
                 'width': 2},
             name='Gaussian window')
-        self.ui.raw_signal_plot.setYRange(-1, 1)
+        self.ui.raw_signal_plot.setYRange(0, 2000)
         # self.ui.raw_signal_plot.setXRange(0,800)
         self.ui.raw_signal_plot.setClipToView(True)
 
@@ -380,12 +381,10 @@ class win(QtWidgets.QMainWindow):
         self.shared_vars.gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(self.shared_vars.samples_num - 1) / 2,
                                                                          (self.shared_vars.samples_num - 1) / 2,
                                                                          self.shared_vars.samples_num) - self.shared_vars.gaussian_pos) / (4 * self.shared_vars.gaussian_sigma))**2)
-        # self.shared_vars.gaussian_window = np.interp(
-        # self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (-1,
-        # 1))
         self.ui.gaussian.setData(
             decimate(
-                self.shared_vars.gaussian_window,
+                np.interp(
+                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 2000)),
                 self.shared_vars.decimation_factor,
                 axis=0))
         self.shared_vars.sig_delay = str(self.ui.trig_delay.text())
@@ -397,6 +396,10 @@ class win(QtWidgets.QMainWindow):
             self.ui.x_start_pos_ui.text())
 
     def set_octparameters(self):
+        self.shared_vars.sample_min = int(self.ui.sampling_start_ui.text())
+        self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
+        self.shared_vars.samples_num = self.shared_vars.sample_max - \
+            self.shared_vars.sample_min
         if self.ui.AveragingCheckBox.isChecked():
             print('Averaging mode')
             # Number of averaged pixels
@@ -460,12 +463,10 @@ class win(QtWidgets.QMainWindow):
         self.shared_vars.gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(self.shared_vars.samples_num - 1) / 2,
                                                                          (self.shared_vars.samples_num - 1) / 2,
                                                                          self.shared_vars.samples_num) - self.shared_vars.gaussian_pos) / (4 * self.shared_vars.gaussian_sigma))**2)
-        # self.shared_vars.gaussian_window = np.interp(
-        # self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (-1,
-        # 1))
         self.ui.gaussian.setData(
             decimate(
-                self.shared_vars.gaussian_window,
+                np.interp(
+                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 2000)),
                 self.shared_vars.decimation_factor,
                 axis=0))
 
@@ -481,12 +482,10 @@ class win(QtWidgets.QMainWindow):
         self.shared_vars.gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(self.shared_vars.samples_num - 1) / 2,
                                                                          (self.shared_vars.samples_num - 1) / 2,
                                                                          self.shared_vars.samples_num) - self.shared_vars.gaussian_pos) / (4 * self.shared_vars.gaussian_sigma))**2)
-        # self.shared_vars.gaussian_window = np.interp(
-        # self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (-1,
-        # 1))
         self.ui.gaussian.setData(
             decimate(
-                self.shared_vars.gaussian_window,
+                np.interp(
+                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 2000)),
                 self.shared_vars.decimation_factor,
                 axis=0))
 
@@ -503,12 +502,10 @@ class win(QtWidgets.QMainWindow):
         self.shared_vars.gaussian_window = np.exp(-1 / 2 * ((np.linspace(-(self.shared_vars.samples_num - 1) / 2,
                                                                          (self.shared_vars.samples_num - 1) / 2,
                                                                          self.shared_vars.samples_num) - self.shared_vars.gaussian_pos) / (4 * self.shared_vars.gaussian_sigma))**2)
-        # self.shared_vars.gaussian_window = np.interp(
-        # self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (-1,
-        # 1))
         self.ui.gaussian.setData(
             decimate(
-                self.shared_vars.gaussian_window,
+                np.interp(
+                    self.shared_vars.gaussian_window, (self.shared_vars.gaussian_window.min(), self.shared_vars.gaussian_window.max()), (0, 2000)),
                 self.shared_vars.decimation_factor,
                 axis=0))
 
@@ -634,6 +631,7 @@ class VolumeScanningThread(QtCore.QThread):
 
     def run(self):
         start_time = time.time()
+        self.shared_vars.raw_data = None
         self.y_scan_range = np.flip(
             np.arange(
                 self.shared_vars.ystop_coordinate,
@@ -670,6 +668,7 @@ class VolumeScanningThread(QtCore.QThread):
                     break
 
                 for itn in range(0, len(self.shared_vars.scan_range)):
+
                     # print(
                     #     'Position:',
                     #     round(
@@ -690,19 +689,16 @@ class VolumeScanningThread(QtCore.QThread):
                         #     'mm ',
                         #     "Spectrum number: ",
                         #     i)
-                        self.shared_vars.data[:, i] = np.flip(
-                            self.shared_vars.buffer_signal, 0)
+                        self.shared_vars.data[:, i] = self.shared_vars.buffer_signal
                         # FOR FUTHER FFT AVERAGING
-                        self.ascan_avg_arr[:, i, itn] = np.flip(
-                            self.shared_vars.buffer_signal, 0)
+                        self.ascan_avg_arr[:, i, itn] = self.shared_vars.buffer_signal
                         time.sleep(self.shared_vars.idle_time)
                         if self.shared_vars.flag != 0:
                             break
                     self.shared_vars.interm_output[:, itn] = np.mean(
                         self.shared_vars.data, 1)
-                    average_f_space = np.flip(
-                        np.rot90(self.shared_vars.data, 1), 1)
-                    self.shared_vars.output_fft[:, itn] = np.mean(oct_process.scan_process(np.flip(oct_process.remap_to_k(average_f_space), 0)), 0)
+                    average_f_space = np.rot90(self.shared_vars.data, 1)
+                    self.shared_vars.output_fft[:, itn] = np.mean(oct_process.scan_process(oct_process.remap_to_k(average_f_space)), 0)
 
                     len_counter = len_counter + 1
 
@@ -711,13 +707,12 @@ class VolumeScanningThread(QtCore.QThread):
                     self.measprog.emit(self.progress)
                     if self.shared_vars.flag != 0:
                         break
-                self.to_ppost = np.flip(np.rot90(self.shared_vars.interm_output, 1), 1)
+                self.to_ppost = np.rot90(self.shared_vars.interm_output, 1)
                 if self.shared_vars.flag != 0:
                     break
 
                 # PROCESS
-                self.shared_vars.b_scan = oct_process.scan_process(
-                    np.flip(oct_process.remap_to_k(self.to_ppost), 0))
+                self.shared_vars.b_scan = oct_process.scan_process(oct_process.remap_to_k(self.to_ppost))
                 self.scanf = np.rot90(self.shared_vars.b_scan)
 
                 self.volume_scan[self.y_pos, :, :] = self.scanf[int(self.shared_vars.samples_num / 2):int(
@@ -790,15 +785,15 @@ class BScanMeasureThread(QtCore.QThread):
                     self.shared_vars.interm_output[:, itn] = np.mean(
                         self.shared_vars.data, 1)
 
-                    self.average_f_space = np.rot90(self.shared_vars.data, 3)
-                    self.shared_vars.output_fft[:, itn] = np.mean(oct_process.scan_process(np.flip(oct_process.remap_to_k(self.average_f_space), 0)), 0)
+                    self.average_f_space = np.rot90(self.shared_vars.data, 1)
+                    self.shared_vars.output_fft[:, itn] = np.mean(oct_process.scan_process(oct_process.remap_to_k(self.average_f_space)), 0)
                     if self.shared_vars.flag != 0:
                         break
-                self.shared_vars.interm_output = np.rot90(self.shared_vars.interm_output, 3)
+                self.shared_vars.interm_output = np.rot90(self.shared_vars.interm_output, 1)
                 self.shared_vars.raw_data = np.copy(self.shared_vars.interm_output)
 
                 # PROCESS
-                self.shared_vars.b_scan = oct_process.scan_process(np.flip(oct_process.remap_to_k(self.shared_vars.interm_output,), 0))
+                self.shared_vars.b_scan = oct_process.scan_process(oct_process.remap_to_k(self.shared_vars.interm_output))
             self.scanf = np.rot90(self.shared_vars.b_scan, 3)
 
             # AVERAGE WITH MEAN FOURIER SPACE
@@ -850,13 +845,12 @@ class PostProcessingThread(QtCore.QThread):
         if self.shared_vars.raw_data is not None:
             self.local_topost = np.copy(self.shared_vars.raw_data)
             with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window) as oct_process:
-                self.local_scan = oct_process.scan_process(
-                    np.flip(oct_process.remap_to_k(self.local_topost), 0))
+                self.local_scan = oct_process.scan_process(oct_process.remap_to_k(self.local_topost))
             self.local_scanf = np.rot90(self.local_scan)
             # AVERAGE WITH MEAN FOURIER SPACE
             self.local_purescn = self.local_scanf[int(self.shared_vars.samples_num / 2):int(
                 self.shared_vars.samples_num / 2 + self.shared_vars.z_sample_num), :]
-            self.shared_vars.b_scan = np.flip(self.local_purescn, 1)
+            self.shared_vars.b_scan = self.local_purescn
             del self.local_topost
         else:
             print('No rawdata stored in memory')
@@ -888,12 +882,25 @@ class InitializationThread(QtCore.QThread):
     initdone = QtCore.Signal(object)
     init_status = QtCore.Signal(object)
 
-    def __init__(self, shared_vars):
+    def __init__(self, shared_vars, buffer_thread):
         super().__init__()
         self.shared_vars = shared_vars
+        self.buffer_thread = buffer_thread
 
     def run(self):
         global shutt  # an example if some shutter should be loaded
+        global pidevice
+
+        # INIT OF CAMERA
+        # #DAQ CONFIGURATION
+        try:
+            self.buffer_thread.cam_init()
+            self.init_msg = '\nCamera is successfully initialized\nReady to measure...\n'
+            self.init_status.emit(self.init_msg)
+        except BaseException:
+            self.init_msg = '\nCamera not found\nReady to measure...\n'
+            self.init_status.emit(self.init_msg)
+
         self.shared_vars.load_parameters()
         if self.shared_vars.cal_vector is not None and self.shared_vars.boundaries is not None:
             self.init_msg = 'Calibration vector loaded'
@@ -901,14 +908,6 @@ class InitializationThread(QtCore.QThread):
         else:
             self.init_msg = 'Calibration vector not found'
             self.init_status.emit(self.init_msg)
-
-        # #DAQ CONFIGURATION
-        # define here your signal source
-
-        # Number of samples
-        self.init_msg = '\nNumber of samples: ' + \
-            str(self.shared_vars.samples_num)
-        self.init_status.emit(self.init_msg)
 
         # Example of initializing something
         if 'shutt' in locals():
