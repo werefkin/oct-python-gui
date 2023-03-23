@@ -2,7 +2,7 @@
 
 GUI for controlling the OCT system in the frequency domain
 
-The GUI software is versatile for rapid prototyping - you need to change the signal source (change the GetBufferThread buffer flow; for demonstration purposes [now] test it is a random generator) and scanning parameters.
+The GUI software is versatile for rapid prototyping - you need to change the signal source (change the GetBufferThread buffer flow; for demonstration purposes [now] a chirped OCT signal is generated in a loop) and scanning parameters.
 The GUI is set up for a stepped approach; but can be modified to continous scan (e.g. with galvo) if the measurement speed is fast enough.
 
 ![OCTControl GUI](octcontrol_screenshot.png)

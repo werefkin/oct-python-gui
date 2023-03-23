@@ -189,7 +189,7 @@ class win(QtWidgets.QMainWindow):
                     51),
                 'width': 2},
             name='Gaussian window')
-        self.ui.raw_signal_plot.setYRange(-2, 2)
+        self.ui.raw_signal_plot.setYRange(0, 3)
         # self.ui.raw_signal_plot.setXRange(0,800)
         self.ui.raw_signal_plot.setClipToView(True)
 
