@@ -20,8 +20,8 @@ class OCTLib:
             remap_interp_func = interp1d(self.cal_vector, data[:, self.boundaries[0]:self.boundaries[-1]],
                                          axis=1, kind=self.kind1, fill_value="extrapolate")
             spectral_interferograms = remap_interp_func(np.linspace(self.boundaries[0], self.boundaries[-1], len(self.cal_vector), endpoint=True))
-            NN = (self.sa_num - len(self.cal_vector)) / 2
-            spectral_interferograms = np.pad(spectral_interferograms, ((0, 0), (int(NN), int(NN))), 'constant')
+            NN = int((self.sa_num - len(self.cal_vector)) / 2)
+            spectral_interferograms = np.pad(spectral_interferograms, ((0, 0), (NN, self.sa_num - NN - len(self.cal_vector))), 'constant')
         else:
             lambda_space_rang = np.linspace(self.wave_min, self.wave_max, self.sa_num, endpoint=True)
             k_space_rang = 1 / lambda_space_rang

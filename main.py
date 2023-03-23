@@ -47,10 +47,10 @@ class win(QtWidgets.QMainWindow):
         self.sys_init_thread = InitializationThread(self.shared_vars, self.buffer_thread)
         self.ystage_init_thread = YstageInitThread(self)
         self.post_process_thread = PostProcessingThread(self.shared_vars)
-        self.y_stage_up = YMoveUpByThread(self)
-        self.y_stage_down = YMoveDownByThread(self)
-        self.y_axis_move_to = YPositionToThread(self)
-        self.x_axis_move_to = XPositionToThread(self)
+        self.y_stage_up = YMoveUpByThread(self.shared_vars)
+        self.y_stage_down = YMoveDownByThread(self.shared_vars)
+        self.y_axis_move_to = YPositionToThread(self.shared_vars)
+        self.x_axis_move_to = XPositionToThread(self.shared_vars)
 
 #        BUTTONS SIGNALS
         self.ui.InitButton.clicked.connect(self.set_init_parameters)
@@ -576,8 +576,9 @@ class GetReferenceThread(QtCore.QThread):
 class YMoveUpByThread(QtCore.QThread):
     status = QtCore.Signal(object)
 
-    def __init__(self, parent=None):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         print('Moved up by 0.5 mm')
@@ -588,8 +589,9 @@ class YMoveUpByThread(QtCore.QThread):
 class YMoveDownByThread(QtCore.QThread):
     status = QtCore.Signal(object)
 
-    def __init__(self, parent=None):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         print('Moved down by 0.5 mm')
@@ -600,8 +602,9 @@ class YMoveDownByThread(QtCore.QThread):
 class YPositionToThread(QtCore.QThread):
     status = QtCore.Signal(object)
 
-    def __init__(self, parent=None):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         self.msg = 'Moved to start Y position'
@@ -611,8 +614,9 @@ class YPositionToThread(QtCore.QThread):
 class XPositionToThread(QtCore.QThread):
     status = QtCore.Signal(object)
 
-    def __init__(self, parent=None):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         self.msg = 'Moved to start X position: ' + \
@@ -864,8 +868,9 @@ class YstageInitThread(QtCore.QThread):
     initdone = QtCore.Signal(object)
     init_status = QtCore.Signal(object)
 
-    def __init__(self, parent=win):
-        QtCore.QThread.__init__(self, parent)
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
 
     def run(self):
         try:
