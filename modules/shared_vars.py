@@ -5,6 +5,8 @@ import pickle
 class SharedVariables:
     def __init__(self):
         # Load variables from a file
+        self.aspect_ratio = 1  # Plotting aspect ratio
+        self.run_continuous = False
         self.flag = 0  # global app flag to stop all the running threads if closeEvent happens
         self.measurement_flag = 1  # flag to abort measurement
         self.inloop_flag = 1  # flag to abort measurement inside a long loop
@@ -39,10 +41,10 @@ class SharedVariables:
         self.ystop_coordinate = 0  # y scanning parameter
         self.ystep = 0.04  # y scanning parameter
 
-        try:
-            self.load_parameters()
-        except BaseException:
-            pass
+        # try:
+        #     self.load_parameters()
+        # except BaseException:
+        #     pass
 
         self.b_scan = np.load('./logo/preset.npy')[:155, :]  # load a preset b-scan
         self.scans = None  # define empthy scans container
@@ -106,7 +108,8 @@ class SharedVariables:
             'ystop_coordinate': self.ystop_coordinate,
             'ystep': self.ystep,
             'gaussian_pos': self.gaussian_pos,
-            'gaussian_sigma': self.gaussian_sigma}
+            'gaussian_sigma': self.gaussian_sigma,
+            'aspect_ratio': self.aspect_ratio}
         with open('./settings/config.cfg', 'wb') as f:
             pickle.dump(self.PARAMs, f)
 
@@ -137,5 +140,7 @@ class SharedVariables:
                 self.ystep = self.PARAMs['ystep']
                 self.gaussian_pos = self.PARAMs['gaussian_pos']
                 self.gaussian_std_ui = self.PARAMs['gaussian_sigma']
+                self.aspect_ratio = self.PARAMs['aspect_ratio']
+
         except FileNotFoundError:
             print("Config file not found. Using default parameters.")

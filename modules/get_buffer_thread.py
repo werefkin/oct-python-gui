@@ -24,10 +24,12 @@ class GetBufferThread(QtCore.QThread):
 
         while self.shared_vars.flag == 0:
             for i in range(self.shared_vars.samples_num):
+                if self.shared_vars.flag == 1:
+                    break
                 self.shared_vars.buffer_signal = 2 * env + \
                     0.2 * env * \
                     (chirp(time, f0=f_start_range1[i], f1=f_start_range1[i] / c_k, t1=10, method='linear') +
                      chirp(time, f0=f_start_range2[i] + offset, f1=(f_start_range2[i] + offset) / c_k, t1=10, method='linear')) + \
                     np.random.normal(0, 0.03, self.shared_vars.samples_num)
-
+            # If just random
             self.shared_vars.buffer_signal = np.random.rand(16384)[self.shared_vars.sample_min: self.shared_vars.sample_max]
