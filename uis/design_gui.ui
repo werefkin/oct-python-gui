@@ -61,7 +61,7 @@
      <number>16</number>
     </property>
     <property name="bottomMargin">
-     <number>24</number>
+     <number>5</number>
     </property>
     <item>
      <layout class="QGridLayout" name="gridMain">
@@ -2670,6 +2670,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionSave">
    <property name="checkable">
     <bool>false</bool>

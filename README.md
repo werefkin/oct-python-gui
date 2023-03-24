@@ -2,14 +2,14 @@
 
 GUI for controlling the OCT system in the frequency domain
 
-The GUI software is versatile for rapid prototyping - you need to change the signal source (change the GetBufferThread buffer flow; for demonstration purposes [now] a chirped OCT signal is generated in a loop) and scanning parameters.
-The GUI is set up for a stepped approach; but can be modified to continous scan (e.g. with galvo) if the measurement speed is fast enough.
+The GUI software is versatile for rapid prototyping - you need to change the signal source (change the GetBufferThread buffer flow; for demonstration purposes [now] a chirped OCT signal is generated in a loop) and sample scanning parameters.
+The GUI is set up for a stepped approach; but can be modified to continous scan (e.g. with galvo) if the measurement speed is fast enough. In this case, modify the user interface ('./uis/design_gui.ui') using QT designer. Python acquisition speed, when looped, is pretty slow; if a faster performance is needed implement read-out of the whole B-scan data at once from the signal-source buffer (not in a line to line manner). This increases the speed drastically. 
 
 ![OCTControl GUI](octcontrol_screenshot.png)
 
 
 ## Calibration vector (amplitude-based correction)
-Calibration allows the elimination of nonlinearities of spectral interferograms in k-space. The calibration vector is determined using an amplitude approach: after interferogram processing, peak positions are determined, and evaluated to be linearized. 
+Calibration allows to linearize wavelength-domain signals and eliminate nonlinearities of spectral interferograms in k-space. The calibration vector is determined using an amplitude approach: after interferogram processing, peak positions are determined, and evaluated to be linearized (in the ideal k-space the distanes are constant). An example of the generation of the vector is given in './generate_calibration_vector'. Certain parameters, such as gaussian filter width, peak height etc should be adjusted manually.
 
 ## Limitations
 The speed of the step-scan approach seems limited due to (1) the loop rate in Python and (2) If on Windows, the minimum timer time resolution in Windows is 1 ms; therefore 1 kHz seems to be a limit.

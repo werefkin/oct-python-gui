@@ -20,7 +20,8 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
     QGroupBox, QHBoxLayout, QLabel, QLayout,
     QLineEdit, QMainWindow, QMenu, QMenuBar,
     QProgressBar, QPushButton, QRadioButton, QSizePolicy,
-    QTextBrowser, QToolButton, QVBoxLayout, QWidget)
+    QStatusBar, QTextBrowser, QToolButton, QVBoxLayout,
+    QWidget)
 
 from pyqtgraph import (ImageView, PlotWidget)
 
@@ -54,7 +55,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setMinimumSize(QSize(0, 0))
         self.horizontalLayout_20 = QHBoxLayout(self.centralwidget)
         self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
-        self.horizontalLayout_20.setContentsMargins(-1, 16, 16, 24)
+        self.horizontalLayout_20.setContentsMargins(-1, 16, 16, 5)
         self.gridMain = QGridLayout()
         self.gridMain.setObjectName(u"gridMain")
         self.group_VisualizationSaving = QGroupBox(self.centralwidget)
@@ -1153,6 +1154,9 @@ class Ui_MainWindow(object):
         self.menuHelp = QMenu(self.menubar)
         self.menuHelp.setObjectName(u"menuHelp")
         MainWindow.setMenuBar(self.menubar)
+        self.statusBar = QStatusBar(MainWindow)
+        self.statusBar.setObjectName(u"statusBar")
+        MainWindow.setStatusBar(self.statusBar)
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
