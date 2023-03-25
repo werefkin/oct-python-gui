@@ -15,12 +15,13 @@ import qtmodern.windows
 from scipy.signal import decimate
 import tifffile as tif
 import os
-from ctypes import windll  # Change the timer resolution of Windows
 import logging
 
-# Change the timer resolution of Windows to 1 ms
-timeBeginPeriod = windll.winmm.timeBeginPeriod
-timeBeginPeriod(1)  # Change the timer resolution of Windows
+if os.name == 'nt':
+    from ctypes import windll  # Change the timer resolution of Windows
+    # Change the timer resolution of Windows to 1 ms
+    timeBeginPeriod = windll.winmm.timeBeginPeriod
+    timeBeginPeriod(1)  # Change the timer resolution of Windows
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
