@@ -7,9 +7,6 @@ from modules.help_ui import Ui_HelpWindow
 from datetime import datetime
 import time
 import numpy as np
-import serial
-import serial.tools.list_ports
-import warnings
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import Slot
@@ -986,33 +983,8 @@ class InitializationThread(QtCore.QThread):
             self.init_status.emit(self.init_msg)
 
         # Example of initializing something
-        if 'shutt' in locals():
-            if shutt.isOpen():
-                shutt.close()
-        if 'shutt' not in globals():
-            try:
-
-                arduino_ports = [
-                    p.device
-                    for p in serial.tools.list_ports.comports()
-                    if 'Arduino' in p.description
-                ]
-                if not arduino_ports:
-                    raise IOError("No Arduino found")
-                if len(arduino_ports) > 1:
-                    warnings.warn('Multiple Arduinos found - using the first')
-
-                shutt = serial.Serial(arduino_ports[0], 9600, timeout=50)
-                time.sleep(1)
-                print('\nShutter system is initialized:', shutt.isOpen())
-                self.init_msg = 'Shutter system is initialized:' + \
-                    str(shutt.isOpen())
-
-            except BaseException:
-                print('\nShutter is not found')
-                self.init_msg = 'Shutter system is not found'
-
-            self.init_status.emit(self.init_msg)
+        self.init_msg = 'Shutter system is initialized'
+        self.init_status.emit(self.init_msg)
 
         print('\nMoving to start position...')
         print('\nReady to measure...')
