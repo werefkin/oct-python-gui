@@ -713,7 +713,9 @@ class VolumeScanningThread(QtCore.QThread):
 
             with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window) as oct_process:
                 for self.y_pos in range(0, len(self.y_scan_range)):
-
+                    # Scanning along Y (if super ystage is defined)
+                    # global ystage
+                    # ystage.moveto(self.y_scan_range[self.y_pos])
                     print(self.y_scan_range[self.y_pos])
                     print(self.y_pos)
 
@@ -724,6 +726,9 @@ class VolumeScanningThread(QtCore.QThread):
                         break
 
                     for itn in range(0, len(self.shared_vars.scan_range)):
+                        # Scanning along X (if super xstage is defined)
+                        # global xstage
+                        # xstage.moveto(self.shared_vars.scan_range[itn])
 
                         # print(
                         #     'Position:',
@@ -823,6 +828,10 @@ class BScanMeasureThread(QtCore.QThread):
 
                 with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window) as oct_process:
                     for itn in range(0, len(self.shared_vars.scan_range)):
+                        # Scanning along X (if super xstage is defined)
+                        # global xstage
+                        # xstage.moveto(self.shared_vars.scan_range[itn])
+
                         # logging.info(
                         #     'Position: %s mm; Errors: %s; Av.self.shared_vars.avg_num: %s; Gaussian window: %s; WinWidth: %s',
                         #     round(
@@ -945,6 +954,16 @@ class YstageInitThread(QtCore.QThread):
         try:
             print('Y stage initialization')
             # Initialize your YStage here
+
+            # Example of how Y stage cam be loaded and initialized (artificial superstage)
+            # try:
+            #     global ystage
+            #     xstage = superstage.init(serial)
+            #     self.init_msg = '\nY stage is initialized\n'
+            #     self.init_status.emit(self.init_msg)
+            # except BaseException:
+            #     self.init_msg = '\nY stage not found\n'
+            #     self.init_status.emit(self.init_msg)
             print('Y stage initialized')
 
             self.init_msg = 'Y stage is initialized'
@@ -966,15 +985,24 @@ class InitializationThread(QtCore.QThread):
         self.buffer_thread = buffer_thread
 
     def run(self):
-        global shutt  # an example if some shutter should be loaded
+        # Example of how X stage cam be loaded and initialized (artificial superstage)
+        # try:
+        #     global xstage
+        #     xstage = superstage.init(serial)
+        #     self.init_msg = '\nX stage is initialized\n'
+        #     self.init_status.emit(self.init_msg)
+        # except BaseException:
+        #     self.init_msg = '\nX stage not found\n'
+        #     self.init_status.emit(self.init_msg)
+
         # INIT OF CAMERA
         # #DAQ CONFIGURATION
         try:
-            self.buffer_thread.cam_init()
+            self.buffer_thread.cam_init()  # Here the source is initialized(exeplified for camera that is defined in the bufffer thread)
             self.init_msg = '\nCamera is successfully initialized\nReady to measure...\n'
             self.init_status.emit(self.init_msg)
         except BaseException:
-            self.init_msg = '\nCamera not found\nReady to measure...\n'
+            self.init_msg = '\nCamera not found\n'
             self.init_status.emit(self.init_msg)
         if self.shared_vars.cal_vector is not None and self.shared_vars.boundaries is not None:
             self.init_msg = 'Calibration vector loaded'

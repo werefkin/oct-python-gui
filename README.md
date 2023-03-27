@@ -1,8 +1,8 @@
 # OCT python GUI for b- and volumetric scanning
 
-GUI for controlling the OCT system in the frequency domain
+GUI for controlling frequency domain OCT system
 
-The GUI software is versatile for rapid prototyping - one need to change the signal source (change the GetBufferThread buffer flow) and sample scanning parameters; for demonstration purposes [now] a chirped OCT signal is generated in a loop.
+The GUI software is simple and versatile for rapid prototyping - one need to change the signal source (change the GetBufferThread buffer flow) and sample scanning parameters [search for `xstage` and `ystage` commented example]; for demonstration purposes [now] a chirped OCT signal is generated in a loop.
 The GUI is set up for a stepped approach; but can be modified to continous scan (e.g. with galvo) if the measurement speed is fast enough. In this case, modify the user interface ('./uis/design_gui.ui') using QT designer. Python acquisition speed, when looped, is pretty slow; if a faster performance is needed implement read-out of the whole B-scan data at once from the signal-source buffer (not in a line to line manner). This increases the speed drastically. 
 
 ![OCTControl GUI](octcontrol_screenshot.png)
@@ -14,10 +14,10 @@ To install all the dependencies, run `pip install -r requirements.txt`
 Run `main.py`
 
 ## Calibration vector (amplitude-based correction)
-Calibration allows to linearize wavelength-domain signals and eliminate nonlinearities of spectral interferograms in k-space. The calibration vector is determined using an amplitude approach: after interferogram processing, peak positions are determined, and evaluated to be linearized (in the ideal k-space the distanes are constant). An example of the generation of the vector is given in './generate_calibration_vector'. Certain parameters, such as gaussian filter width, peak height etc should be adjusted manually.
+Calibration allows to linearize wavelength-domain signals and eliminate nonlinearities of spectral interferograms in k-space. The calibration vector is determined using an amplitude approach: after interferogram processing, peak positions are determined, and evaluated to be linearized (in the ideal k-space the spacing is constant). An example of the generation of the vector is given in './generate_calibration_vector'. Certain parameters, such as gaussian filter width, peak height etc should be adjusted manually.
 
 ## Limitations
-The speed of the step-scan approach seems limited due to (1) the loop rate in Python and (2) If on Windows, the minimum timer time resolution in Windows is 1 ms; therefore 1 kHz seems to be a limit.
+The speed of the step-scan approach seems limited due to (1) the loop rate in Python and (2) If on Windows, the minimum system timer resolution in Windows of 1 ms; therefore 1 kHz seems to be an ultimate limit. For quick measurements, dump the entire b-scan buffer at once, not using python, while use the gui for setting the parameters and postprocessing.
 
 # Struture of components
 
