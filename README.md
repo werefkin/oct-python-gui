@@ -2,7 +2,7 @@
 
 GUI for controlling the OCT system in the frequency domain
 
-The GUI software is versatile for rapid prototyping - you need to change the signal source (change the GetBufferThread buffer flow; for demonstration purposes [now] a chirped OCT signal is generated in a loop) and sample scanning parameters.
+The GUI software is versatile for rapid prototyping - one need to change the signal source (change the GetBufferThread buffer flow; for demonstration purposes [now] a chirped OCT signal is generated in a loop) and sample scanning parameters.
 The GUI is set up for a stepped approach; but can be modified to continous scan (e.g. with galvo) if the measurement speed is fast enough. In this case, modify the user interface ('./uis/design_gui.ui') using QT designer. Python acquisition speed, when looped, is pretty slow; if a faster performance is needed implement read-out of the whole B-scan data at once from the signal-source buffer (not in a line to line manner). This increases the speed drastically. 
 
 ![OCTControl GUI](octcontrol_screenshot.png)
