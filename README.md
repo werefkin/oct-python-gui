@@ -7,6 +7,11 @@ The GUI is set up for a stepped approach; but can be modified to continous scan 
 
 ![OCTControl GUI](octcontrol_screenshot.png)
 
+# Installation
+
+To install all the dependencies, run `pip install -r requirements.txt`
+
+Run `main.py`
 
 ## Calibration vector (amplitude-based correction)
 Calibration allows to linearize wavelength-domain signals and eliminate nonlinearities of spectral interferograms in k-space. The calibration vector is determined using an amplitude approach: after interferogram processing, peak positions are determined, and evaluated to be linearized (in the ideal k-space the distanes are constant). An example of the generation of the vector is given in './generate_calibration_vector'. Certain parameters, such as gaussian filter width, peak height etc should be adjusted manually.
