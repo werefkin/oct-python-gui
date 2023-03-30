@@ -112,6 +112,24 @@ class win(QtWidgets.QMainWindow):
         self.ui.actionSave.triggered.connect(self.set_parameters_to_save)
         self.ui.actionSave.triggered.connect(self.save_params_thread.start)
 
+        # VALIDATORS
+        self.ui.a_idle_time.setValidator(QtGui.QDoubleValidator(0.00000, 10000.000, 5, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.avg_num_ui.setValidator(QtGui.QIntValidator(1, 10000))
+        self.ui.wave_right_ui.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.wave_left_ui.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.gaussian_std_ui.setValidator(QtGui.QDoubleValidator(1, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.gaussian_pos_ui.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.sampling_start_ui.setValidator(QtGui.QIntValidator(0, 100000))
+        self.ui.sampling_stop_ui.setValidator(QtGui.QIntValidator(1, 100000))
+        self.ui.x_start_pos_ui.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.x_stop_pos_ui.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.x_step_ui.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.ui_y_start_pos.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.ui_y_stop_pos.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.y_step.setValidator(QtGui.QDoubleValidator(0, 100000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.aspect_ratio.setValidator(QtGui.QDoubleValidator(0, 10.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+        self.ui.log10_coef.setValidator(QtGui.QDoubleValidator(0, 1000000000.00, 3, notation=QtGui.QDoubleValidator.StandardNotation))
+
 
 #        OTHER SIGNAL-SLOT CONNECTIONS
         self.referencing_thread.refprog.connect(self.refprogress)
