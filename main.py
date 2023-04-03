@@ -263,10 +263,11 @@ class win(QtWidgets.QMainWindow):
 
     def run_volumetric(self):
         self.volumetric = QtWidgets.QMainWindow()
-        self.voluis = Ui_VolumetricWidget()
-        self.voluis.setupUi(self.volumetric)
-        self.voluis.ApplyRenderingButton.clicked.connect(self.plot_upd_volume)
-        self.voluis.SetAnglesButton.clicked.connect(self.set_angles_volume)
+        self.volumetric_ui = Ui_VolumetricWidget()
+        self.volumetric_ui.setupUi(self.volumetric)
+        # self.volumetric = qtmodern.windows.ModernWindow(self.volumetric)
+        self.volumetric_ui.ApplyRenderingButton.clicked.connect(self.plot_upd_volume)
+        self.volumetric_ui.SetAnglesButton.clicked.connect(self.set_angles_volume)
         qr = self.volumetric.frameGeometry()
         cp = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
         qr.moveCenter(cp)
@@ -289,29 +290,32 @@ class win(QtWidgets.QMainWindow):
             self.data_4d = np.transpose(self.data_4d, (1, 2, 3, 0))
             # create a GLVolumeItem and add it to the view
             vol = pyqtgraph.opengl.GLVolumeItem(self.data_4d)
-            self.voluis.CscanWidget.addItem(vol)
-            self.voluis.CscanWidget.setCameraPosition(distance=1000)
-            self.voluis.CscanWidget.show()
+            self.volumetric_ui.CscanWidget.addItem(vol)
+            self.volumetric_ui.CscanWidget.setCameraPosition(distance=1000)
+            self.volumetric_ui.CscanWidget.show()
 
     def plot_upd_volume(self):
-        self.volume = 20 * np.log10(self.shared_vars.scans + float(self.voluis.log10_coef_3d_ui.text()))
+        self.volume = 20 * np.log10(self.shared_vars.scans + float(self.volumetric_ui.log10_coef_3d_ui.text()))
         self.volume = (self.volume - np.min(self.volume)) / (np.max(self.volume) - np.min(self.volume))
         self.data_4d = np.array([4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 512 * self.volume])
         self.data_4d = np.transpose(self.data_4d, (1, 2, 3, 0))
         # create a GLVolumeItem and add it to the view
         vol = pyqtgraph.opengl.GLVolumeItem(self.data_4d)
-        self.voluis.CscanWidget.clear()
-        self.voluis.CscanWidget.addItem(vol)
-        self.voluis.CscanWidget.setCameraPosition(distance=1000)
-        self.voluis.CscanWidget.show()
-        camera_params = self.voluis.CscanWidget.cameraParams()
-        print("Camera parameters: ", camera_params)
+        self.volumetric_ui.CscanWidget.clear()
+        self.volumetric_ui.CscanWidget.addItem(vol)
+        self.volumetric_ui.CscanWidget.setCameraPosition(distance=1000)
+        self.volumetric_ui.CscanWidget.show()
+        camera_params = self.volumetric_ui.CscanWidget.cameraParams()
+        print('Camera parameters: ', camera_params)
 
     def set_angles_volume(self):
-        self.voluis.CscanWidget.setCameraPosition(azimuth=float(self.voluis.x_angle_ui.text()), elevation=float(self.voluis.y_angle_ui.text()), distance=float(self.voluis.distance_ui.text()))
-        camera_params = self.voluis.CscanWidget.cameraParams()
-        print("Cew camera parameters: ", camera_params)
-
+        try:
+            self.volumetric_ui.CscanWidget.setCameraPosition(azimuth=float(self.volumetric_ui.x_angle_ui.text()), elevation=float(self.volumetric_ui.y_angle_ui.text()), distance=float(self.volumetric_ui.distance_ui.text()))
+            camera_params = self.volumetric_ui.CscanWidget.cameraParams()
+            print("New camera parameters: ", camera_params)
+        except BaseException:
+            print('Unvalid parameters:')
+    
     def closeWindow(self):
         print('q')
         self.about.close()
