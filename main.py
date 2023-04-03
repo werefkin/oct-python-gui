@@ -265,7 +265,8 @@ class win(QtWidgets.QMainWindow):
         self.volumetric = QtWidgets.QMainWindow()
         self.volumetric_ui = Ui_VolumetricWidget()
         self.volumetric_ui.setupUi(self.volumetric)
-        # self.volumetric = qtmodern.windows.ModernWindow(self.volumetric)
+        self.volumetric = qtmodern.windows.ModernWindow(self.volumetric)
+        self.volumetric.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)  # disable translucent background
         self.volumetric_ui.ApplyRenderingButton.clicked.connect(self.plot_upd_volume)
         self.volumetric_ui.SetAnglesButton.clicked.connect(self.set_angles_volume)
         qr = self.volumetric.frameGeometry()
@@ -315,7 +316,7 @@ class win(QtWidgets.QMainWindow):
             print("New camera parameters: ", camera_params)
         except BaseException:
             print('Unvalid parameters:')
-    
+
     def closeWindow(self):
         print('q')
         self.about.close()
