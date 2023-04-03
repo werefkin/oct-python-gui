@@ -4,3 +4,4 @@
 
 pyside6-uic ./uis/design_gui.ui -o ./modules/proc_ui.py 
 pyside6-uic ./uis/help_ui.ui -o ./modules/help_ui.py 
+pyside6-uic ./uis/vol_ui.ui -o ./modules/vol_ui.py 

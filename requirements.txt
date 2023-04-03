@@ -10,3 +10,5 @@ scipy==1.10.1
 shiboken6==6.4.2
 tifffile==2023.3.15
 wincertstore==0.2
+PyOpenGL==3.1.6
+pyparsing==3.0.9

@@ -49,6 +49,8 @@ class Ui_MainWindow(object):
         self.actionSave.setEnabled(True)
         self.actionAbout = QAction(MainWindow)
         self.actionAbout.setObjectName(u"actionAbout")
+        self.actionVolumetric_plotter = QAction(MainWindow)
+        self.actionVolumetric_plotter.setObjectName(u"actionVolumetric_plotter")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setEnabled(True)
@@ -1166,15 +1168,19 @@ class Ui_MainWindow(object):
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menubar)
         self.menuHelp.setObjectName(u"menuHelp")
+        self.menuTools = QMenu(self.menubar)
+        self.menuTools.setObjectName(u"menuTools")
         MainWindow.setMenuBar(self.menubar)
         self.statusBar = QStatusBar(MainWindow)
         self.statusBar.setObjectName(u"statusBar")
         MainWindow.setStatusBar(self.statusBar)
 
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
         self.menuFile.addAction(self.actionSave)
         self.menuHelp.addAction(self.actionAbout)
+        self.menuTools.addAction(self.actionVolumetric_plotter)
 
         self.retranslateUi(MainWindow)
 
@@ -1197,6 +1203,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(shortcut)
         self.actionAbout.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+H", None))
 #endif // QT_CONFIG(shortcut)
+        self.actionVolumetric_plotter.setText(QCoreApplication.translate("MainWindow", u"Volumetric plotter", None))
         self.group_VisualizationSaving.setTitle(QCoreApplication.translate("MainWindow", u"Visualization and saving", None))
         self.label_Aspect.setText(QCoreApplication.translate("MainWindow", u"Aspect Ratio", None))
         self.aspect_ratio.setText(QCoreApplication.translate("MainWindow", u"2", None))
@@ -1295,5 +1302,6 @@ class Ui_MainWindow(object):
         self.logo.setText("")
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
+        self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))
     # retranslateUi
 

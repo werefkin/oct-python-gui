@@ -4,6 +4,7 @@ from modules.get_buffer_thread import GetBufferThread
 from modules.octlib import OCTLib
 from modules.proc_ui import Ui_MainWindow
 from modules.help_ui import Ui_HelpWindow
+from modules.vol_ui import Ui_VolumetricWidget
 from datetime import datetime
 import time
 import numpy as np
@@ -16,6 +17,7 @@ from scipy.signal import decimate
 import tifffile as tif
 import os
 import logging
+import pyqtgraph.opengl
 
 if os.name == 'nt':
     from ctypes import windll  # Change the timer resolution of Windows
@@ -105,6 +107,8 @@ class win(QtWidgets.QMainWindow):
         self.ui.SetRangeButton.clicked.connect(self.buffer_thread.start)
         self.ui.StopAcqButton.clicked.connect(self.stop_spectrometer)
         self.ui.actionAbout.triggered.connect(self.openWindow)
+        self.ui.actionVolumetric_plotter.triggered.connect(self.run_volumetric)
+
         self.ui.ApplyProcButton.clicked.connect(
             self.set_postprocessparameters)
 
@@ -256,6 +260,57 @@ class win(QtWidgets.QMainWindow):
         qr.moveCenter(cp)
         self.about.move(qr.topLeft())
         self.about.show()
+
+    def run_volumetric(self):
+        self.volumetric = QtWidgets.QMainWindow()
+        self.voluis = Ui_VolumetricWidget()
+        self.voluis.setupUi(self.volumetric)
+        self.voluis.ApplyRenderingButton.clicked.connect(self.plot_upd_volume)
+        self.voluis.SetAnglesButton.clicked.connect(self.set_angles_volume)
+        qr = self.volumetric.frameGeometry()
+        cp = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.volumetric.move(qr.topLeft())
+        self.volumetric.show()
+        self.data_4d = None
+        # create a 3D array
+        self.plot_volume()
+        # self.vol_plotter_thread = some_thread() # if some thread is needed
+        # self.vol_plotter_thread.start()
+
+    def plot_volume(self):
+        if self.shared_vars.scans is None:
+            self.shared_vars.scans = np.load('./logo/cscan.npy')
+        self.volume = 20 * np.log10(self.shared_vars.scans + 2)
+
+        if self.data_4d is None:
+            self.volume = (self.volume - np.min(self.volume)) / (np.max(self.volume) - np.min(self.volume))
+            self.data_4d = np.array([4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 512 * self.volume])
+            self.data_4d = np.transpose(self.data_4d, (1, 2, 3, 0))
+            # create a GLVolumeItem and add it to the view
+            vol = pyqtgraph.opengl.GLVolumeItem(self.data_4d)
+            self.voluis.CscanWidget.addItem(vol)
+            self.voluis.CscanWidget.setCameraPosition(distance=1000)
+            self.voluis.CscanWidget.show()
+
+    def plot_upd_volume(self):
+        self.volume = 20 * np.log10(self.shared_vars.scans + float(self.voluis.log10_coef_3d_ui.text()))
+        self.volume = (self.volume - np.min(self.volume)) / (np.max(self.volume) - np.min(self.volume))
+        self.data_4d = np.array([4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 512 * self.volume])
+        self.data_4d = np.transpose(self.data_4d, (1, 2, 3, 0))
+        # create a GLVolumeItem and add it to the view
+        vol = pyqtgraph.opengl.GLVolumeItem(self.data_4d)
+        self.voluis.CscanWidget.clear()
+        self.voluis.CscanWidget.addItem(vol)
+        self.voluis.CscanWidget.setCameraPosition(distance=1000)
+        self.voluis.CscanWidget.show()
+        camera_params = self.voluis.CscanWidget.cameraParams()
+        print("Camera parameters: ", camera_params)
+
+    def set_angles_volume(self):
+        self.voluis.CscanWidget.setCameraPosition(azimuth=float(self.voluis.x_angle_ui.text()), elevation=float(self.voluis.y_angle_ui.text()), distance=float(self.voluis.distance_ui.text()))
+        camera_params = self.voluis.CscanWidget.cameraParams()
+        print("Cew camera parameters: ", camera_params)
 
     def closeWindow(self):
         print('q')
@@ -800,7 +855,6 @@ class VolumeScanningThread(QtCore.QThread):
 
                     self.volume_scan[self.y_pos, :, :] = self.scanf[int(self.shared_vars.samples_num / 2):int(
                         self.shared_vars.samples_num / 2) + self.shared_vars.z_sample_num, :]
-                    self.shared_vars.scans = self.volume_scan
                     self.shared_vars.b_scan = np.flip(np.moveaxis(
                         np.flip(self.volume_scan[:self.y_pos + 1, :, :], 0), -1, 0), 1)
                     z_counter = z_counter + 1
@@ -808,6 +862,7 @@ class VolumeScanningThread(QtCore.QThread):
                         self.mdat.emit(self.progress)
                         print(np.shape(self.shared_vars.b_scan))
 
+            self.shared_vars.scans = self.volume_scan
             # motor.move_to(self.y_scan_range[0])
 
             self.shared_vars.b_scan = np.moveaxis(
