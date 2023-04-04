@@ -1176,7 +1176,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1280, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1280, 18))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menubar)
@@ -1216,7 +1216,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(shortcut)
         self.actionAbout.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+H", None))
 #endif // QT_CONFIG(shortcut)
-        self.actionVolumetric_plotter.setText(QCoreApplication.translate("MainWindow", u"Volumetric plotter", None))
+        self.actionVolumetric_plotter.setText(QCoreApplication.translate("MainWindow", u"Volume viewer", None))
         self.group_VisualizationSaving.setTitle(QCoreApplication.translate("MainWindow", u"Visualization and saving", None))
         self.label_Aspect.setText(QCoreApplication.translate("MainWindow", u"Aspect Ratio", None))
         self.aspect_ratio.setText(QCoreApplication.translate("MainWindow", u"2", None))
@@ -1263,9 +1263,9 @@ class Ui_MainWindow(object):
         self.logbrowser.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Ubuntu'; font-size:10pt; font-weight:600; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-weight:400;\">Initialization required</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-weight:400;\"><br /></p></body></html>", None))
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:400;\">Initialization required</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:400;\"><br /></p></body></html>", None))
         self.group_AcquisitionParameters.setTitle(QCoreApplication.translate("MainWindow", u"Acquisition parameters", None))
         self.label_param1.setText(QCoreApplication.translate("MainWindow", u"PARAM1", None))
         self.param1.setText(QCoreApplication.translate("MainWindow", u"1024", None))

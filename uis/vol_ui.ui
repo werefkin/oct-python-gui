@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Volumetric Plotter</string>
+   <string>C-scan Volume Viewer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -79,7 +79,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="x_angle_ui"/>
+            <widget class="QLineEdit" name="x_angle_ui">
+             <property name="text">
+              <string>-60</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="label_ele">
@@ -89,7 +93,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="y_angle_ui"/>
+            <widget class="QLineEdit" name="y_angle_ui">
+             <property name="text">
+              <string>-55</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="label_distance">
@@ -99,14 +107,18 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="distance_ui"/>
+            <widget class="QLineEdit" name="distance_ui">
+             <property name="text">
+              <string>1000</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="log10_coef_3d_ui">
            <property name="text">
-            <string>10</string>
+            <string>100</string>
            </property>
           </widget>
          </item>

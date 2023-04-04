@@ -12,7 +12,7 @@ class SharedVariables:
         self.inloop_flag = 1  # flag to abort measurement inside a long loop
         self.idle_time = 0.05  # a-scan idle time (time deley between a-scans); as the system is async the buffer just sleeps while the measurement is done
         self.decimation_factor = 2  # to downsample Live signals (more efficient plotting)
-
+        self.data_4d = None  # placeholder for volumetric viewer
         self.sample_min = 0  # min sample num in the signal
         self.sample_max = 16384  # max sample num in the signal
 
@@ -25,6 +25,7 @@ class SharedVariables:
         self.directory = ''  # directory name (defaul: data_output of the main folder)
         self.filename = 'test'  # default save filename
         self.log_coeff = 1  # coefficient for plot
+        self.vol_log_coeff = 10  # coefficient for volume view
         self.param1 = 0  # param1 to be used
 
         self.z_sample_num = 512  # Number of pixels in depth (to limit memory use for volumetruc arrays)

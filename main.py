@@ -54,6 +54,7 @@ class win(QtWidgets.QMainWindow):
         self.y_stage_down = YMoveDownByThread(self.shared_vars)
         self.y_axis_move_to = YPositionToThread(self.shared_vars)
         self.x_axis_move_to = XPositionToThread(self.shared_vars)
+        self.vol_plotter_thread = CreateVolume(self.shared_vars)
 
 #        BUTTONS SIGNALS
         self.ui.InitButton.clicked.connect(self.set_init_parameters)
@@ -168,6 +169,7 @@ class win(QtWidgets.QMainWindow):
         self.y_stage_down.status.connect(self.addlogline)
         self.y_axis_move_to.status.connect(self.addlogline)
         self.x_axis_move_to.status.connect(self.addlogline)
+        self.vol_plotter_thread.volume_ready.connect(self.plot_volume)
 
 #        PLOTS
         self.ui.BscanWidget.show()
@@ -275,39 +277,30 @@ class win(QtWidgets.QMainWindow):
         self.volumetric.move(qr.topLeft())
         self.volumetric.show()
         self.data_4d = None
-        # create a 3D array
-        self.plot_volume()
-        # self.vol_plotter_thread = some_thread() # if some thread is needed
-        # self.vol_plotter_thread.start()
+        # Run creator thread
+        self.vol_plotter_thread.start()
+        self.volumetric_ui.CscanWidget.setCameraPosition(distance=600, azimuth=-60, elevation=-55)
 
     def plot_volume(self):
-        if self.shared_vars.scans is None:
-            self.shared_vars.scans = np.load('./logo/cscan.npy')
-        self.volume = 20 * np.log10(self.shared_vars.scans + 2)
-
-        if self.data_4d is None:
-            self.volume = (self.volume - np.min(self.volume)) / (np.max(self.volume) - np.min(self.volume))
-            self.data_4d = np.array([4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 512 * self.volume])
-            self.data_4d = np.transpose(self.data_4d, (1, 2, 3, 0))
-            # create a GLVolumeItem and add it to the view
-            vol = pyqtgraph.opengl.GLVolumeItem(self.data_4d)
-            self.volumetric_ui.CscanWidget.addItem(vol)
-            self.volumetric_ui.CscanWidget.setCameraPosition(distance=1000)
-            self.volumetric_ui.CscanWidget.show()
+        # create a GLVolumeItem and add it to the view
+        self.volumetric_ui.CscanWidget.addItem(pyqtgraph.opengl.GLVolumeItem(self.shared_vars.data_4d))
+        self.volumetric_ui.CscanWidget.show()
 
     def plot_upd_volume(self):
-        self.volume = 20 * np.log10(self.shared_vars.scans + float(self.volumetric_ui.log10_coef_3d_ui.text()))
-        self.volume = (self.volume - np.min(self.volume)) / (np.max(self.volume) - np.min(self.volume))
-        self.data_4d = np.array([4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 512 * self.volume])
-        self.data_4d = np.transpose(self.data_4d, (1, 2, 3, 0))
+        self.shared_vars.vol_log_coeff = float(self.volumetric_ui.log10_coef_3d_ui.text())
+        print(self.shared_vars.vol_log_coeff)
+        self.clear_volume()
+        self.vol_plotter_thread.start()
+        self.vol_plotter_thread.wait()
         # create a GLVolumeItem and add it to the view
-        vol = pyqtgraph.opengl.GLVolumeItem(self.data_4d)
         self.volumetric_ui.CscanWidget.clear()
-        self.volumetric_ui.CscanWidget.addItem(vol)
-        self.volumetric_ui.CscanWidget.setCameraPosition(distance=1000)
+        self.volumetric_ui.CscanWidget.addItem(pyqtgraph.opengl.GLVolumeItem(self.shared_vars.data_4d))
         self.volumetric_ui.CscanWidget.show()
         camera_params = self.volumetric_ui.CscanWidget.cameraParams()
         print('Camera parameters: ', camera_params)
+
+    def clear_volume(self):
+        self.volumetric_ui.CscanWidget.clear()
 
     def set_angles_volume(self):
         try:
@@ -1200,6 +1193,25 @@ class SaveParamsThread(QtCore.QThread):
     def run(self):
         np.save('./settings/ref.npy', self.shared_vars.reference_spectrum)
         self.shared_vars.save_parameters()
+
+
+class CreateVolume(QtCore.QThread):
+    volume_ready = QtCore.Signal(object)
+
+    def __init__(self, shared_vars):
+        super().__init__()
+        self.shared_vars = shared_vars
+
+    def run(self):
+        if self.shared_vars.scans is None:
+            self.shared_vars.scans = np.load('./logo/cscan.npy')
+        self.volume = 20 * np.log10(self.shared_vars.scans + self.shared_vars.vol_log_coeff)
+        print(self.shared_vars.vol_log_coeff)
+        self.volume = (self.volume - np.min(self.volume)) / (np.max(self.volume) - np.min(self.volume))
+        self.shared_vars.data_4d = np.array([4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 1024 * self.volume, 4 * 512 * self.volume])
+        self.shared_vars.data_4d = np.transpose(self.shared_vars.data_4d, (1, 2, 3, 0))
+        print('Volume created')
+        self.volume_ready.emit(self)
 
 
 if __name__ == "__main__":

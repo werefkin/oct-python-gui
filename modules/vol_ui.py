@@ -130,15 +130,18 @@ class Ui_VolumetricWidget(object):
     # setupUi
 
     def retranslateUi(self, VolumetricWidget):
-        VolumetricWidget.setWindowTitle(QCoreApplication.translate("VolumetricWidget", u"Volumetric Plotter", None))
+        VolumetricWidget.setWindowTitle(QCoreApplication.translate("VolumetricWidget", u"C-scan Volume Viewer", None))
         self.groupBox.setTitle(QCoreApplication.translate("VolumetricWidget", u"Rendering parameters", None))
         self.label_dr_3d.setText(QCoreApplication.translate("VolumetricWidget", u"Dynamic range offset", None))
         self.ApplyRenderingButton.setText(QCoreApplication.translate("VolumetricWidget", u"Apply", None))
         self.label_3d_angles.setText(QCoreApplication.translate("VolumetricWidget", u"Positioning", None))
         self.label_azi.setText(QCoreApplication.translate("VolumetricWidget", u"Azimuth", None))
+        self.x_angle_ui.setText(QCoreApplication.translate("VolumetricWidget", u"-60", None))
         self.label_ele.setText(QCoreApplication.translate("VolumetricWidget", u"Elevation", None))
+        self.y_angle_ui.setText(QCoreApplication.translate("VolumetricWidget", u"-55", None))
         self.label_distance.setText(QCoreApplication.translate("VolumetricWidget", u"Distance", None))
-        self.log10_coef_3d_ui.setText(QCoreApplication.translate("VolumetricWidget", u"10", None))
+        self.distance_ui.setText(QCoreApplication.translate("VolumetricWidget", u"1000", None))
+        self.log10_coef_3d_ui.setText(QCoreApplication.translate("VolumetricWidget", u"100", None))
         self.SetAnglesButton.setText(QCoreApplication.translate("VolumetricWidget", u"Set", None))
     # retranslateUi
 
