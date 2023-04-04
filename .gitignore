@@ -5,3 +5,4 @@ __pycache__/
 !generate_calibration_vector/*.npy
 
 settings/ref.npy
+!logo/*.npy
