@@ -9,8 +9,19 @@ class GetBufferThread(QtCore.QThread):
         super().__init__()
         self.shared_vars = shared_vars
 
+    def cam_close(self):
+        self.device = None
+
     def cam_init(self):
-        self.device = True
+        if not hasattr(self, 'device'):
+            try:
+                self.device = True
+                self.message = '\nSignal Source is successfully initialized\nReady to measure...\n'
+            except BaseException:
+                self.message = '\nError in Signal Source initialization\n'
+
+        else:
+            self.message = '\nSignal Source is already initialized\n'
 
     def run(self):
         self.active = True

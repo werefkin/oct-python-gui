@@ -658,6 +658,7 @@ class win(QtWidgets.QMainWindow):
             self.shared_vars.measurement_flag = 0
             self.wait_for_threads()
             self.ui.BscanWidget.setParent(None)
+            self.buffer_thread.cam_close()
             print('Close')
             QApplication.quit()
         else:
@@ -1068,12 +1069,15 @@ class InitializationThread(QtCore.QThread):
 
         # INIT OF CAMERA
         # #DAQ CONFIGURATION
+        self.initerror = False
         try:
             self.buffer_thread.cam_init()  # Here the source is initialized(exeplified for camera that is defined in the bufffer thread)
-            self.init_msg = '\nCamera is successfully initialized\nReady to measure...\n'
+            self.init_msg = self.buffer_thread.message
             self.init_status.emit(self.init_msg)
         except BaseException:
+            print('I am here')
             self.init_msg = '\nCamera not found\n'
+            self.initerror = True
             self.init_status.emit(self.init_msg)
         if self.shared_vars.cal_vector is not None and self.shared_vars.boundaries is not None:
             self.init_msg = 'Calibration vector loaded'
@@ -1088,7 +1092,10 @@ class InitializationThread(QtCore.QThread):
 
         print('\nMoving to start position...')
         print('\nReady to measure...')
-        self.init_msg = '\nHardware is successfully initialized\nReady to measure...\n'
+        if self.initerror is True:
+            self.init_msg = '\nInitialization errors detected\n'
+        else:
+            self.init_msg = '\nHardware is successfully initialized\nReady to measure...\n'
         self.init_status.emit(self.init_msg)
         self.initdone.emit(self)
 
