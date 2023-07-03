@@ -144,7 +144,7 @@ corrected = abs(np.fft.fftshift(np.fft.fft(signal_2nonlin_wl)))
 
 np.save('./settings/calibration_vector.npy', CalVector)
 boundaries = np.array([peaks[0], peaks[-1]])
-np.save('./settings/oundaries.npy', boundaries)
+np.save('./settings/boundaries.npy', boundaries)
 
 plt.figure()
 plt.plot(np.log10(uncorrected))

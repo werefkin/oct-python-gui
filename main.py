@@ -1030,7 +1030,7 @@ class YstageInitThread(QtCore.QThread):
             # Example of how Y stage cam be loaded and initialized (artificial superstage)
             # try:
             #     global ystage
-            #     xstage = superstage.init(serial)
+            #     ystage = superstage.init(serial)
             #     self.init_msg = '\nY stage is initialized\n'
             #     self.init_status.emit(self.init_msg)
             # except BaseException:
