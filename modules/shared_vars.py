@@ -15,6 +15,7 @@ class SharedVariables:
         self.data_4d = None  # placeholder for volumetric viewer
         self.sample_min = 0  # min sample num in the signal
         self.sample_max = 16384  # max sample num in the signal
+        self.phase_comp_coeff = [0.00004, -0.000000035]  # phase compensation coefficient
 
         try:
             self.reference_spectrum = np.load('./settings/ref.npy')  # load a referebce spectrum
@@ -26,13 +27,14 @@ class SharedVariables:
         self.filename = 'test'  # default save filename
         self.log_coeff = 1  # coefficient for plot
         self.vol_log_coeff = 10  # coefficient for volume view
-        self.param1 = 0  # param1 to be used
+        self.param1 = 0.00004  # param1 for phase correction
+        self.param2 = -0.000000035  # param2 for phase correction
 
         self.z_sample_num = 512  # Number of pixels in depth (to limit memory use for volumetruc arrays)
 
         self.avg_num = 3  # Number of averaged measurements
-        self.wave_left = 3235.6  # min wavelength in nm
-        self.wave_right = 4200.27  # max wavelength in nm
+        self.wave_left = 3390.501  # min wavelength in nm
+        self.wave_right = 4490.497  # max wavelength in nm
 
         self.xstop_coordinate = 0  # x scanning parameter
         self.xstart_coordinate = 4  # x scanning parameter
@@ -97,6 +99,7 @@ class SharedVariables:
             'filename': self.filename,
             'log_coeff': self.log_coeff,
             'param1': self.param1,
+            'param2': self.param2,
             'z_sample_num': self.z_sample_num,
             'avg_num': self.avg_num,
             'wave_left': self.wave_left,
@@ -128,6 +131,7 @@ class SharedVariables:
                 self.filename = self.PARAMs['filename']
                 self.log_coeff = self.PARAMs['log_coeff']
                 self.param1 = self.PARAMs['param1']
+                self.param2 = self.PARAMs['param2']
                 self.z_sample_num = self.PARAMs['z_sample_num']
                 self.avg_num = self.PARAMs['avg_num']
                 self.wave_left = self.PARAMs['wave_left']

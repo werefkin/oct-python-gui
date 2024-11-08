@@ -1420,61 +1420,6 @@ p, li { white-space: pre-wrap; }
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_AcquisitionParameters">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_Param1">
-             <item>
-              <widget class="QLabel" name="label_param1">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>15</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <italic>false</italic>
-                 <bold>true</bold>
-                 <strikeout>false</strikeout>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string>PARAM1</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="param1">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>50</weight>
-                 <italic>false</italic>
-                 <bold>false</bold>
-                 <strikeout>false</strikeout>
-                 <kerning>false</kerning>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string>1024</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_TrigDelay">
              <item>
               <widget class="QLabel" name="label_delay">
@@ -1486,7 +1431,7 @@ p, li { white-space: pre-wrap; }
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>8</pointsize>
                  <weight>75</weight>
                  <italic>false</italic>
                  <bold>true</bold>
@@ -1497,7 +1442,7 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>TRIG. DELAY</string>
+                <string>Trigger delay</string>
                </property>
               </widget>
              </item>
@@ -1524,61 +1469,6 @@ p, li { white-space: pre-wrap; }
                </property>
                <property name="text">
                 <string>0</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_param2">
-             <item>
-              <widget class="QLabel" name="label_param2">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>15</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <italic>false</italic>
-                 <bold>true</bold>
-                 <strikeout>false</strikeout>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string>PARAM2</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="param2">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>50</weight>
-                 <italic>false</italic>
-                 <bold>false</bold>
-                 <strikeout>false</strikeout>
-                 <kerning>false</kerning>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string>256</string>
                </property>
               </widget>
              </item>
@@ -2034,7 +1924,7 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>3235</string>
+                <string>3390.50</string>
                </property>
               </widget>
              </item>
@@ -2059,7 +1949,7 @@ p, li { white-space: pre-wrap; }
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>4220</string>
+                <string>4490.497</string>
                </property>
               </widget>
              </item>
@@ -2168,6 +2058,116 @@ p, li { white-space: pre-wrap; }
                </property>
                <property name="text">
                 <string>0</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_param2">
+             <item>
+              <widget class="QLabel" name="label_param2">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                 <weight>75</weight>
+                 <italic>false</italic>
+                 <bold>true</bold>
+                 <strikeout>false</strikeout>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Phase C2</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="param1">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>50</weight>
+                 <italic>false</italic>
+                 <bold>false</bold>
+                 <strikeout>false</strikeout>
+                 <kerning>false</kerning>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>0.00004</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_Param1">
+             <item>
+              <widget class="QLabel" name="label_param1">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>15</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                 <weight>75</weight>
+                 <italic>false</italic>
+                 <bold>true</bold>
+                 <strikeout>false</strikeout>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Phase C3</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="param2">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>50</weight>
+                 <italic>false</italic>
+                 <bold>false</bold>
+                 <strikeout>false</strikeout>
+                 <kerning>false</kerning>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>-0.000000035</string>
                </property>
               </widget>
              </item>
@@ -2772,7 +2772,7 @@ p, li { white-space: pre-wrap; }
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>2023 by Ivan Zorin</string>
+             <string>2024 by Ivan Zorin</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>

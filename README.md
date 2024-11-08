@@ -16,7 +16,17 @@ Run `main.py`
 an executive verstion with an `exe` can be generated using pyinstaller (run `pyinstaller main.spec`)
 
 ## Calibration vector (amplitude-based correction)
+Since the GUI was initially developed for use in scanning spectrometers that have wavelength nonlinearity, it implements calibration for equidistant resampling (based on zero-crossings). This is **optional** if your spectra are linear in wavelength region, no calibration is needed.
 Calibration allows to linearize wavelength-domain signals and eliminate nonlinearities of spectral interferograms in k-space. The calibration vector is determined using an amplitude approach: after interferogram processing, peak positions are determined, and evaluated to be linearized (in the ideal k-space the spacing is constant). An example of the generation of the vector is given in './generate_calibration_vector'. Certain parameters, such as gaussian filter width, peak height etc should be adjusted manually.
+
+## Dispersion compensation
+Implemented in the `OCTlib.py`
+A phase component before the FT can be added to compesate the dispersion, adjust `C2` and `C3` parameters (second and third order dispersion coefficients) to define the phase. 
+
+The phase component added to the spectral interferograms before the FT is defined then as:
+        `phase = np.exp(1j * (c2 * k**2 + c3 * k**3))`
+
+For the same taken measurement the phase can be adjsuted by clicking `Set/Apply` and `Plot scan` for different C2 and C3
 
 ## Limitations
 The speed of the step-scan approach seems limited due to (1) the loop rate in Python and (2) If on Windows, the minimum system timer resolution in Windows of 1 ms; therefore 1 kHz seems to be an ultimate limit. For quick measurements, dump the entire b-scan buffer at once, not using python, while use the gui for setting the parameters and postprocessing.

@@ -613,39 +613,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.verticalLayout_AcquisitionParameters = QVBoxLayout()
         self.verticalLayout_AcquisitionParameters.setObjectName(u"verticalLayout_AcquisitionParameters")
-        self.horizontalLayout_Param1 = QHBoxLayout()
-        self.horizontalLayout_Param1.setObjectName(u"horizontalLayout_Param1")
-        self.label_param1 = QLabel(self.group_AcquisitionParameters)
-        self.label_param1.setObjectName(u"label_param1")
-        self.label_param1.setMinimumSize(QSize(0, 15))
-        self.label_param1.setFont(font1)
-        self.label_param1.setStyleSheet(u"")
-
-        self.horizontalLayout_Param1.addWidget(self.label_param1)
-
-        self.param1 = QLineEdit(self.group_AcquisitionParameters)
-        self.param1.setObjectName(u"param1")
-        self.param1.setMinimumSize(QSize(0, 20))
-        font6 = QFont()
-        font6.setPointSize(10)
-        font6.setBold(False)
-        font6.setItalic(False)
-        font6.setStrikeOut(False)
-        font6.setKerning(False)
-        self.param1.setFont(font6)
-        self.param1.setStyleSheet(u"")
-
-        self.horizontalLayout_Param1.addWidget(self.param1)
-
-
-        self.verticalLayout_AcquisitionParameters.addLayout(self.horizontalLayout_Param1)
-
         self.horizontalLayout_TrigDelay = QHBoxLayout()
         self.horizontalLayout_TrigDelay.setObjectName(u"horizontalLayout_TrigDelay")
         self.label_delay = QLabel(self.group_AcquisitionParameters)
         self.label_delay.setObjectName(u"label_delay")
         self.label_delay.setMinimumSize(QSize(0, 15))
-        self.label_delay.setFont(font1)
+        self.label_delay.setFont(font2)
         self.label_delay.setStyleSheet(u"")
 
         self.horizontalLayout_TrigDelay.addWidget(self.label_delay)
@@ -653,6 +626,12 @@ class Ui_MainWindow(object):
         self.trig_delay = QLineEdit(self.group_AcquisitionParameters)
         self.trig_delay.setObjectName(u"trig_delay")
         self.trig_delay.setMinimumSize(QSize(0, 20))
+        font6 = QFont()
+        font6.setPointSize(10)
+        font6.setBold(False)
+        font6.setItalic(False)
+        font6.setStrikeOut(False)
+        font6.setKerning(False)
         self.trig_delay.setFont(font6)
         self.trig_delay.setStyleSheet(u"")
 
@@ -660,27 +639,6 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_AcquisitionParameters.addLayout(self.horizontalLayout_TrigDelay)
-
-        self.horizontalLayout_param2 = QHBoxLayout()
-        self.horizontalLayout_param2.setObjectName(u"horizontalLayout_param2")
-        self.label_param2 = QLabel(self.group_AcquisitionParameters)
-        self.label_param2.setObjectName(u"label_param2")
-        self.label_param2.setMinimumSize(QSize(0, 15))
-        self.label_param2.setFont(font1)
-        self.label_param2.setStyleSheet(u"")
-
-        self.horizontalLayout_param2.addWidget(self.label_param2)
-
-        self.param2 = QLineEdit(self.group_AcquisitionParameters)
-        self.param2.setObjectName(u"param2")
-        self.param2.setMinimumSize(QSize(0, 20))
-        self.param2.setFont(font6)
-        self.param2.setStyleSheet(u"")
-
-        self.horizontalLayout_param2.addWidget(self.param2)
-
-
-        self.verticalLayout_AcquisitionParameters.addLayout(self.horizontalLayout_param2)
 
         self.ApplyButton = QPushButton(self.group_AcquisitionParameters)
         self.ApplyButton.setObjectName(u"ApplyButton")
@@ -906,6 +864,48 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_PostProcessParams.addLayout(self.horizontalLayout_GaussianWindowPos)
+
+        self.horizontalLayout_param2 = QHBoxLayout()
+        self.horizontalLayout_param2.setObjectName(u"horizontalLayout_param2")
+        self.label_param2 = QLabel(self.group_PostProcessParams)
+        self.label_param2.setObjectName(u"label_param2")
+        self.label_param2.setMinimumSize(QSize(0, 15))
+        self.label_param2.setFont(font2)
+        self.label_param2.setStyleSheet(u"")
+
+        self.horizontalLayout_param2.addWidget(self.label_param2)
+
+        self.param1 = QLineEdit(self.group_PostProcessParams)
+        self.param1.setObjectName(u"param1")
+        self.param1.setMinimumSize(QSize(0, 20))
+        self.param1.setFont(font6)
+        self.param1.setStyleSheet(u"")
+
+        self.horizontalLayout_param2.addWidget(self.param1)
+
+
+        self.verticalLayout_PostProcessParams.addLayout(self.horizontalLayout_param2)
+
+        self.horizontalLayout_Param1 = QHBoxLayout()
+        self.horizontalLayout_Param1.setObjectName(u"horizontalLayout_Param1")
+        self.label_param1 = QLabel(self.group_PostProcessParams)
+        self.label_param1.setObjectName(u"label_param1")
+        self.label_param1.setMinimumSize(QSize(0, 15))
+        self.label_param1.setFont(font2)
+        self.label_param1.setStyleSheet(u"")
+
+        self.horizontalLayout_Param1.addWidget(self.label_param1)
+
+        self.param2 = QLineEdit(self.group_PostProcessParams)
+        self.param2.setObjectName(u"param2")
+        self.param2.setMinimumSize(QSize(0, 20))
+        self.param2.setFont(font6)
+        self.param2.setStyleSheet(u"")
+
+        self.horizontalLayout_Param1.addWidget(self.param2)
+
+
+        self.verticalLayout_PostProcessParams.addLayout(self.horizontalLayout_Param1)
 
         self.SetProcParamsButton = QPushButton(self.group_PostProcessParams)
         self.SetProcParamsButton.setObjectName(u"SetProcParamsButton")
@@ -1267,12 +1267,8 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:400;\">Initialization required</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:400;\"><br /></p></body></html>", None))
         self.group_AcquisitionParameters.setTitle(QCoreApplication.translate("MainWindow", u"Acquisition parameters", None))
-        self.label_param1.setText(QCoreApplication.translate("MainWindow", u"PARAM1", None))
-        self.param1.setText(QCoreApplication.translate("MainWindow", u"1024", None))
-        self.label_delay.setText(QCoreApplication.translate("MainWindow", u"TRIG. DELAY", None))
+        self.label_delay.setText(QCoreApplication.translate("MainWindow", u"Trigger delay", None))
         self.trig_delay.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.label_param2.setText(QCoreApplication.translate("MainWindow", u"PARAM2", None))
-        self.param2.setText(QCoreApplication.translate("MainWindow", u"256", None))
         self.ApplyButton.setText(QCoreApplication.translate("MainWindow", u"Apply", None))
         self.group_OCTParams.setTitle(QCoreApplication.translate("MainWindow", u"Scanning parameters", None))
         self.AveragingCheckBox.setText(QCoreApplication.translate("MainWindow", u"Averaging", None))
@@ -1286,12 +1282,16 @@ class Ui_MainWindow(object):
         self.Preset2Radio.setText(QCoreApplication.translate("MainWindow", u"PRESET2", None))
         self.Preset1Radio.setText(QCoreApplication.translate("MainWindow", u"PRESET1", None))
         self.label_Bandwidth.setText(QCoreApplication.translate("MainWindow", u"Sampling bandwidth (nm)", None))
-        self.wave_left_ui.setText(QCoreApplication.translate("MainWindow", u"3235", None))
-        self.wave_right_ui.setText(QCoreApplication.translate("MainWindow", u"4220", None))
+        self.wave_left_ui.setText(QCoreApplication.translate("MainWindow", u"3390.50", None))
+        self.wave_right_ui.setText(QCoreApplication.translate("MainWindow", u"4490.497", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Gaussian sigma (spl)", None))
         self.gaussian_std_ui.setText(QCoreApplication.translate("MainWindow", u"1500", None))
         self.label_GaussianPos.setText(QCoreApplication.translate("MainWindow", u"Window position", None))
         self.gaussian_pos_ui.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.label_param2.setText(QCoreApplication.translate("MainWindow", u"Phase C2", None))
+        self.param1.setText(QCoreApplication.translate("MainWindow", u"0.00004", None))
+        self.label_param1.setText(QCoreApplication.translate("MainWindow", u"Phase C3", None))
+        self.param2.setText(QCoreApplication.translate("MainWindow", u"-0.000000035", None))
         self.SetProcParamsButton.setText(QCoreApplication.translate("MainWindow", u"Set", None))
         self.ApplyProcButton.setText(QCoreApplication.translate("MainWindow", u"Apply", None))
         self.group_ReferencingBox.setTitle(QCoreApplication.translate("MainWindow", u"Referenceing", None))
@@ -1311,7 +1311,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(shortcut)
         self.SetRangeButton.setShortcut("")
 #endif // QT_CONFIG(shortcut)
-        self.by_me.setText(QCoreApplication.translate("MainWindow", u"2023 by Ivan Zorin", None))
+        self.by_me.setText(QCoreApplication.translate("MainWindow", u"2024 by Ivan Zorin", None))
         self.logo.setText("")
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))

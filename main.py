@@ -344,6 +344,7 @@ class win(QtWidgets.QMainWindow):
         self.ui.filenameline.setText(str(self.shared_vars.filename))
         self.ui.log10_coef.setText(str(self.shared_vars.log_coeff))
         self.ui.param1.setText(str(self.shared_vars.param1))
+        self.ui.param2.setText(str(self.shared_vars.param2))
         self.ui.avg_num_ui.setText(str(self.shared_vars.avg_num))
         self.ui.wave_right_ui.setText(str(self.shared_vars.wave_right))
         self.ui.wave_left_ui.setText(str(self.shared_vars.wave_left))
@@ -354,7 +355,7 @@ class win(QtWidgets.QMainWindow):
         self.ui.ui_y_start_pos.setText(str(self.shared_vars.ystart_coordinate))
         self.ui.ui_y_stop_pos.setText(str(self.shared_vars.ystop_coordinate))
         self.ui.y_step.setText(str(self.shared_vars.ystep))
-        self.ui.gaussian_std_ui.setText(str(self.shared_vars.gaussian_std_ui))
+        self.ui.gaussian_std_ui.setText(str(self.shared_vars.gaussian_sigma))
         self.ui.gaussian_pos_ui.setText(str(self.shared_vars.gaussian_pos))
         self.ui.aspect_ratio.setText(str(self.shared_vars.aspect_ratio))
 
@@ -407,7 +408,7 @@ class win(QtWidgets.QMainWindow):
         self.ui.logbrowser.append('Data visualized successfully')
 
     def set_acq_parameters(self):
-        self.shared_vars.param1 = self.ui.param1.text()
+        print('Aqc. parameters set')
 
     def set_init_parameters(self):
         # READ OUT GUI PARAMS TO SET THEM
@@ -439,7 +440,8 @@ class win(QtWidgets.QMainWindow):
         self.shared_vars.ystop_coordinate = float(self.ui.ui_y_stop_pos.text())
         self.shared_vars.gaussian_sigma = float(self.ui.gaussian_std_ui.text())
         self.shared_vars.gaussian_pos = float(self.ui.gaussian_pos_ui.text())
-        self.shared_vars.param1 = self.ui.param1.text()
+        self.shared_vars.param1 = float(self.ui.param1.text())
+        self.shared_vars.param2 = float(self.ui.param2.text())
         self.shared_vars.filename = self.ui.filenameline.text()
         self.shared_vars.log_coeff = float(self.ui.log10_coef.text())
         self.shared_vars.aspect_ratio = float(self.ui.aspect_ratio.text())
@@ -538,6 +540,8 @@ class win(QtWidgets.QMainWindow):
         self.shared_vars.sample_max = int(self.ui.sampling_stop_ui.text())
         self.shared_vars.samples_num = self.shared_vars.sample_max - \
             self.shared_vars.sample_min
+        self.shared_vars.param1 = float(self.ui.param1.text())
+        self.shared_vars.param2 = float(self.ui.param2.text())
 
         self.shared_vars.wave_left = float(self.ui.wave_left_ui.text())
         self.shared_vars.wave_right = float(self.ui.wave_right_ui.text())
@@ -783,7 +787,7 @@ class VolumeScanningThread(QtCore.QThread):
             len_counter = 1
             z_counter = 1
 
-            with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window) as oct_process:
+            with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window, c2=self.shared_vars.param1, c3=self.shared_vars.param2) as oct_process:
                 for self.y_pos in range(0, len(self.y_scan_range)):
                     # Scanning along Y (if super ystage is defined)
                     # global ystage
@@ -898,7 +902,7 @@ class BScanMeasureThread(QtCore.QThread):
                     str(self.shared_vars.xstart_coordinate - self.shared_vars.xstop_coordinate) + 'mm\n' + 'Averaging: ' + str(self.shared_vars.avg_num)
                 self.meas_status.emit(self.ms_msg)
 
-                with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window) as oct_process:
+                with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window, c2=self.shared_vars.param1, c3=self.shared_vars.param2) as oct_process:
                     for itn in range(0, len(self.shared_vars.scan_range)):
                         # Scanning along X (if super xstage is defined)
                         # global xstage
@@ -1001,7 +1005,7 @@ class PostProcessingThread(QtCore.QThread):
         # PROCESS
         if self.shared_vars.raw_data is not None:
             self.local_topost = np.copy(self.shared_vars.raw_data)
-            with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window) as oct_process:
+            with OCTLib(self.shared_vars.reference_spectrum, self.shared_vars.wave_left, self.shared_vars.wave_right, self.shared_vars.cal_vector, self.shared_vars.boundaries, self.shared_vars.samples_num, gauss_win_in=self.shared_vars.gaussian_window, c2=self.shared_vars.param1, c3=self.shared_vars.param2) as oct_process:
                 self.local_scan = oct_process.scan_process(
                     oct_process.remap_to_k(self.local_topost))
             self.local_scanf = np.rot90(self.local_scan)
